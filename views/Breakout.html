@@ -30,11 +30,12 @@
         let dx = 1;
         let dy = -1;
         let ballRadius = 10;
+        let ballColor = 345;
 
         function drawBall() {
             ctx.beginPath();
             ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
-            ctx.fillStyle = "#0095DD";
+            ctx.fillStyle = "#" + ballColor.toString(16     );
             ctx.fill();
             ctx.closePath();
         }
@@ -46,9 +47,11 @@
             y += dy;
             if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
                 dx = -dx;
+                ballColor = Math.round(Math.random()*16777215);
             }
             if (y + dy > canvas.height - ballRadius || y + dy < ballRadius) {
                 dy = -dy;
+                ballColor = Math.round(Math.random()*16777215);
             }
         }
         setInterval(draw, 10);
