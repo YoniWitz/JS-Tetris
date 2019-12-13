@@ -144,7 +144,7 @@
 
         document.addEventListener("keydown", keyDownHandler, false);
         document.addEventListener("keyup", keyUpHandler, false);
-
+        //key down event listener
         function keyDownHandler(e) {
             if (e.key == "Right" || e.key == "ArrowRight") {
                 rightPressed = true;
@@ -153,7 +153,7 @@
                 leftPressed = true;
             }
         }
-
+//key up event listener
         function keyUpHandler(e) {
             if (e.key == "Right" || e.key == "ArrowRight") {
                 rightPressed = false;
