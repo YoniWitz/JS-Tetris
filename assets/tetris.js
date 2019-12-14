@@ -60,9 +60,9 @@ function drawBorderLines() {
 }
 function draw() {
     ctx.clearRect(PADDING * 2, PADDING * 2, GAME_WIDTH - PADDING * 3, CANVAS_HEIGHT - 3 * PADDING);
-    drawSmallBoxes("black");
+    drawSmallBoxes("grey");
     requestAnimationFrame(draw);
 }
 
-drawBorderLines();
+//drawBorderLines();
 draw();
