@@ -49,6 +49,7 @@
         let brickPadding = 10;
         let brickOffsetTop = 30;
         let brickOffsetLeft = 30;
+        let score = 0;
 
         //create the bricks 2d array
         let bricks = [];
@@ -95,22 +96,30 @@
                 }
             }
         }
+
+        //draw score
+        function drawScore() {
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#0095DD";
+    ctx.fillText("Score: "+score, 8, 20);
+}
         //draw everything
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBall();
             drawPaddle();
             drawBricks();
-            collisionDetection()
            
+            collisionDetection()
+
             //if user hit right key
             if (rightPressed && paddleX < canvas.width - paddleWidth) {
-        paddleX += 7;
-    }   
+                paddleX += 7;
+            }
             //if user hit left key
             else if (leftPressed && paddleX > 0) {
-        paddleX -= 7;
-    }
+                paddleX -= 7;
+            }
 
             //if ball bounces off right or left edge
             if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
@@ -131,15 +140,15 @@
                 //if paddle misses
                 else {
                     alert("GAME OVER");
-                     //deactivate internal
-                     clearInterval(interval);
+                    //deactivate internal
+                    clearInterval(interval);
                     //reload page
                     document.location.reload();
-                   
+
                 }
             }
-             //get ready for next step
-             x += dx;
+            //get ready for next step
+            x += dx;
             y += dy;
 
         }
@@ -173,6 +182,13 @@
                         if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
                             dy = -dy;
                             b.status = 0;
+                            score++;
+                            if(score == brickRowCount*brickColumnCount) {
+                                drawScore();
+                        alert("YOU WIN, CONGRATULATIONS!");
+                        document.location.reload();
+                        clearInterval(interval); // Needed for Chrome to end game
+                    }
                         }
                     }
                 }
