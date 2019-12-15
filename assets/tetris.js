@@ -45,12 +45,12 @@ createNewRow = () => {
     for (let c = 0; c < BOXES_COLUMN_COUNT; c++) {
         newRow[0][c] = { status: 0 };
     }
-    addCoordinates(newRow);  
+    //addCoordinates(newRow);
 }
 
 drawBoxes = (array) => {
-    for (let r = 0; r < array.length; r++) {
-        for (let c = 0; c < array[r].length; c++) {
+    for (let r = 0; r < BOXES_ROW_COUNT; r++) {
+        for (let c = 0; c < BOXES_COLUMN_COUNT; c++) {
             if (array[r][c].status === 0) {
                 color = "gray"
             }
@@ -66,7 +66,6 @@ drawBoxes = (array) => {
             ctx.fillStyle = color;
             ctx.fill();
             ctx.closePath();
-
         }
     }
 }
@@ -80,11 +79,18 @@ drawBorderLines = () => {
 }
 
 draw = () => {
-    ctx.clearRect(PADDING * 2, PADDING * 2, GAME_WIDTH - PADDING * 3, CANVAS_HEIGHT - 3 * PADDING);
-    //boxes.push(newRow);
-    //boxes.pop();
-    drawBoxes(background);
-    requestAnimationFrame(draw);
+    let rand =  Math.round(Math.random() * (tetrominos.length - 1));
+    let tetromino = tetrominos[rand];
+    let temp;
+    for (let r = tetromino.length - 1; r >= 0; r--) {
+        temp = JSON.parse(JSON.stringify(tetromino[r]));
+        background.unshift(temp);
+        background.pop();
+        addCoordinates(background);
+        ctx.clearRect(PADDING * 2, PADDING * 2, GAME_WIDTH - PADDING * 3, CANVAS_HEIGHT - 3 * PADDING);
+        drawBoxes(background);
+    }
+    // requestAnimationFrame(draw);
 }
 
 createInitialBackgroundArray = () => {
@@ -94,7 +100,7 @@ createInitialBackgroundArray = () => {
             background[r][c] = { status: 0 };
         }
     }
-    addCoordinates(background);
+    //addCoordinates(background);
 }
 
 createTetrominos = () => {
@@ -120,10 +126,10 @@ createTetromino = (ones) => {
     for (let r = 0; r < 4; r++) {
         tetromino[r] = [];
         for (let c = 0; c < BOXES_COLUMN_COUNT; c++) {
-            tetromino[r][c] = {status:0};
+            tetromino[r][c] = { status: 0 };
         }
     }
-    addCoordinates(tetromino);
+    //addCoordinates(tetromino);
     ones.forEach(item => {
         tetromino[item.r][item.c].status = 1;
     })
@@ -131,11 +137,11 @@ createTetromino = (ones) => {
 }
 
 //drawBorderLines();
-
-createTetrominos();
-
-//createNewRow();
-//drawBoxes(newRow);
-
-//createInitialBackgroundArray();
-//draw(background);
+window.onload = () => {
+    createTetrominos();
+    createNewRow();
+    //drawBoxes(newRow);
+    createInitialBackgroundArray();
+    let oneSecond = 1000;
+    setInterval(draw, oneSecond);
+}
