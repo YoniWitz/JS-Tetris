@@ -19,32 +19,50 @@ const BOXES_INNER_BOX_WIDTH = BOXES_INNER_BOX_HEIGHT = BOXES_SIZE - INNER_TO_OUT
 
 
 let tetrominos = [];
-let boxes = [];
+let background = [];
+let newRow = [];
 
-//boxes stuff
-drawSmallBoxes = (array) => {
+addCoordinates = (array) => {
+    for (let r = 0; r < array.length; r++) {
+        for (let c = 0; c < array[r].length; c++) {
+            let outerBoxX = PADDING * 2 + BOXES_PADDING * (1 + 2 * c) + (c * BOXES_BORDER_WIDTH);
+            let outerBoxY = PADDING * 2 + BOXES_PADDING * (1 + 2 * r) + (r * BOXES_BORDER_HEIGHT);
+
+            let innerBoxX = PADDING * 2 + INNER_TO_OUTER_RATIO * BOXES_PADDING * (1 + 2 * c) + (c * BOXES_INNER_BOX_WIDTH);
+            let innerBoxY = PADDING * 2 + INNER_TO_OUTER_RATIO * BOXES_PADDING * (1 + 2 * r) + (r * BOXES_INNER_BOX_HEIGHT);
+
+            array[r][c].outerX = outerBoxX;
+            array[r][c].outerY = outerBoxY;
+
+            array[r][c].innerX = innerBoxX;
+            array[r][c].innerY = innerBoxY;
+        }
+    }
+}
+
+createNewRow = () => {
+    newRow[0] = [];
     for (let c = 0; c < BOXES_COLUMN_COUNT; c++) {
-        for (let r = 0; r < BOXES_ROW_COUNT; r++) {
-            if (boxes[c][r].status === 0) {
+        newRow[0][c] = { status: 0 };
+    }
+    addCoordinates(newRow);  
+}
+
+drawBoxes = (array) => {
+    for (let r = 0; r < array.length; r++) {
+        for (let c = 0; c < array[r].length; c++) {
+            if (array[r][c].status === 0) {
                 color = "gray"
             }
             else {
                 color = "black"
             }
-            let outerBoxX = PADDING * 2 + BOXES_PADDING * (1 + 2 * c) + (c * BOXES_BORDER_WIDTH);
-            let outerBoxY = PADDING * 2 + BOXES_PADDING * (1 + 2 * r) + (r * BOXES_BORDER_HEIGHT);
 
-
-            let innerBoxX = PADDING * 2 + INNER_TO_OUTER_RATIO * BOXES_PADDING * (1 + 2 * c) + (c * BOXES_INNER_BOX_WIDTH);
-            let innerBoxY = PADDING * 2 + INNER_TO_OUTER_RATIO * BOXES_PADDING * (1 + 2 * r) + (r * BOXES_INNER_BOX_HEIGHT);
-
-            boxes[c][r].x = outerBoxX;
-            boxes[c][r].y = outerBoxY;
             ctx.beginPath();
             //outer box
-            ctx.strokeRect(outerBoxX, outerBoxY, BOXES_BORDER_WIDTH, BOXES_BORDER_HEIGHT);
+            ctx.strokeRect(array[r][c].outerX, array[r][c].outerY, BOXES_BORDER_WIDTH, BOXES_BORDER_HEIGHT);
             //inner box
-            ctx.rect(innerBoxX, innerBoxY, BOXES_INNER_BOX_WIDTH, BOXES_INNER_BOX_HEIGHT);
+            ctx.rect(array[r][c].innerX, array[r][c].innerY, BOXES_INNER_BOX_WIDTH, BOXES_INNER_BOX_HEIGHT);
             ctx.fillStyle = color;
             ctx.fill();
             ctx.closePath();
@@ -52,6 +70,7 @@ drawSmallBoxes = (array) => {
         }
     }
 }
+
 //static board stuff
 drawBorderLines = () => {
     ctx.strokeStyle = "#FF0000";
@@ -60,22 +79,22 @@ drawBorderLines = () => {
     ctx.strokeRect(PADDING, PADDING, GAME_WIDTH - PADDING * 2, CANVAS_HEIGHT - PADDING * 2);//for white background
 }
 
-drawTetrominos = () => {
-    // tetrominos.forEach( item =>)
-}
 draw = () => {
     ctx.clearRect(PADDING * 2, PADDING * 2, GAME_WIDTH - PADDING * 3, CANVAS_HEIGHT - 3 * PADDING);
-    drawSmallBoxes("grey");
+    //boxes.push(newRow);
+    //boxes.pop();
+    drawBoxes(background);
     requestAnimationFrame(draw);
 }
 
-createInitialBoxesArray = () => {
-    for (let c = 0; c < BOXES_COLUMN_COUNT; c++) {
-        boxes[c] = [];
-        for (let r = 0; r < BOXES_ROW_COUNT; r++) {
-            boxes[c][r] = { x: 0, y: 0, status: 0 };
+createInitialBackgroundArray = () => {
+    for (let r = 0; r < BOXES_ROW_COUNT; r++) {
+        background[r] = [];
+        for (let c = 0; c < BOXES_COLUMN_COUNT; c++) {
+            background[r][c] = { status: 0 };
         }
     }
+    addCoordinates(background);
 }
 
 createTetrominos = () => {
@@ -87,21 +106,13 @@ createTetrominos = () => {
     let tOnes = [{ r: 2, c: 4 }, { r: 3, c: 3 }, { r: 3, c: 4 }, { r: 3, c: 5 }];
     let zOnes = [{ r: 2, c: 3 }, { r: 2, c: 4 }, { r: 3, c: 4 }, { r: 3, c: 5 }];
 
-    let tetrominoI = createTetromino(iOnes);
-    let tetrominoJ = createTetromino(jOnes);
-    let tetrominoL = createTetromino(lOnes);
-    let tetrominoO = createTetromino(oOnes);
-    let tetrominoS = createTetromino(sOnes);
-    let tetrominoT = createTetromino(tOnes);
-    let tetrominoZ = createTetromino(zOnes);
-
-    tetrominos.push(tetrominoI);
-    tetrominos.push(tetrominoJ);
-    tetrominos.push(tetrominoL);
-    tetrominos.push(tetrominoO);
-    tetrominos.push(tetrominoS);
-    tetrominos.push(tetrominoT);
-    tetrominos.push(tetrominoZ);
+    tetrominos.push(createTetromino(iOnes));
+    tetrominos.push(createTetromino(jOnes));
+    tetrominos.push(createTetromino(lOnes));
+    tetrominos.push(createTetromino(oOnes));
+    tetrominos.push(createTetromino(sOnes));
+    tetrominos.push(createTetromino(tOnes));
+    tetrominos.push(createTetromino(zOnes));
 }
 
 createTetromino = (ones) => {
@@ -109,16 +120,22 @@ createTetromino = (ones) => {
     for (let r = 0; r < 4; r++) {
         tetromino[r] = [];
         for (let c = 0; c < BOXES_COLUMN_COUNT; c++) {
-            tetromino[r][c] = 0;
+            tetromino[r][c] = {status:0};
         }
     }
+    addCoordinates(tetromino);
     ones.forEach(item => {
-        tetromino[item.r][item.c] = 1;
+        tetromino[item.r][item.c].status = 1;
     })
     return tetromino;
 }
+
 //drawBorderLines();
-createInitialBoxesArray();
+
 createTetrominos();
 
-draw();
+//createNewRow();
+//drawBoxes(newRow);
+
+//createInitialBackgroundArray();
+//draw(background);
