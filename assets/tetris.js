@@ -17,10 +17,19 @@ const BOXES_BORDER_WIDTH = BOXES_BORDER_HEIGHT = BOXES_SIZE - 2 * BOXES_PADDING;
 const INNER_TO_OUTER_RATIO = 3.5;
 const BOXES_INNER_BOX_WIDTH = BOXES_INNER_BOX_HEIGHT = BOXES_SIZE - INNER_TO_OUTER_RATIO * 2 * BOXES_PADDING;
 
-
+//arrays
 let tetrominos = [];
 let background = [];
 let newRow = [];
+let flag;
+
+//
+const ONE_SECOND = 1000;
+let rightPressed = false;
+let leftPressed = false;
+let temp;
+let tempTetrino = [];
+let sidewaysFlag = false;
 
 addCoordinates = (array) => {
     for (let r = 0; r < array.length; r++) {
@@ -41,9 +50,8 @@ addCoordinates = (array) => {
 }
 
 createNewRow = () => {
-    newRow[0] = [];
     for (let c = 0; c < BOXES_COLUMN_COUNT; c++) {
-        newRow[0][c] = { status: 0 };
+        newRow[c] = { status: 0 };
     }
     //addCoordinates(newRow);
 }
@@ -79,17 +87,17 @@ drawBorderLines = () => {
 }
 
 draw = () => {
-    let rand =  Math.round(Math.random() * (tetrominos.length - 1));
-    let tetromino = tetrominos[rand];
-    let temp;
-    for (let r = tetromino.length - 1; r >= 0; r--) {
-        temp = JSON.parse(JSON.stringify(tetromino[r]));
-        background.unshift(temp);
+    if (!sidewaysFlag) {
+        background.unshift(JSON.parse(JSON.stringify(newRow)));
         background.pop();
-        addCoordinates(background);
-        ctx.clearRect(PADDING * 2, PADDING * 2, GAME_WIDTH - PADDING * 3, CANVAS_HEIGHT - 3 * PADDING);
-        drawBoxes(background);
     }
+    else {
+        sidewaysFlag = false;
+    }
+    addCoordinates(background);
+    ctx.clearRect(PADDING * 2, PADDING * 2, GAME_WIDTH - PADDING * 3, CANVAS_HEIGHT - 3 * PADDING);
+    drawBoxes(background);
+
     // requestAnimationFrame(draw);
 }
 
@@ -129,12 +137,72 @@ createTetromino = (ones) => {
             tetromino[r][c] = { status: 0 };
         }
     }
-    //addCoordinates(tetromino);
+
     ones.forEach(item => {
         tetromino[item.r][item.c].status = 1;
     })
+
     return tetromino;
 }
+
+//key listener function
+keyDownHandler = (event) => {
+    sidewaysFlag = true;
+    var code = event.which;
+    switch (code) {
+        //space
+        case 32:
+            break;
+        //right arrow
+        case 39:
+            tempTetrino.forEach(item => {
+                //if tetromino pressed against right wall
+                if (item[item.length - 1].status === 1) {
+                    sidewaysFlag = false;
+                    return;
+                }
+            });
+
+            if (sidewaysFlag) {
+                tempTetrino.forEach(item => {
+                    item.unshift(item.pop());
+                })
+            }
+            break;
+        //left arrow
+        case 37:
+            tempTetrino.forEach(item => {
+                //if tetromino pressed against left wall
+                if (item[0].status === 1) {
+                    sidewaysFlag = false;
+                    return;
+                }
+            });
+            if (sidewaysFlag) {
+                tempTetrino.forEach(item => {
+                    item.push(item.shift());
+                })
+            }
+            break;
+        //up arrow
+        case 38:
+
+            break;
+        //down arrow
+        case 40:
+
+            break;
+    }
+};
+
+// keyUpHandler = (e) => {
+//     if (e.key == "Right" || e.key == "ArrowRight") {
+//         rightPressed = false;
+//     }
+//     else if (e.key == "Left" || e.key == "ArrowLeft") {
+//         leftPressed = false;
+//     }
+// }
 
 //drawBorderLines();
 window.onload = () => {
@@ -142,6 +210,18 @@ window.onload = () => {
     createNewRow();
     //drawBoxes(newRow);
     createInitialBackgroundArray();
-    let oneSecond = 1000;
-    setInterval(draw, oneSecond);
+    //key listener
+    document.addEventListener("keydown", keyDownHandler, false);
+    //   document.addEventListener("keyup", keyUpHandler, false);
+
+    let rand = Math.round(Math.random() * (tetrominos.length - 1));
+    let tetromino = tetrominos[rand];
+
+
+    for (let r = tetromino.length - 1; r >= 0; r--) {
+        temp = JSON.parse(JSON.stringify(tetromino[r]));
+        tempTetrino.unshift(temp);
+        background.unshift(temp);
+    }
+    setInterval(draw, ONE_SECOND);
 }
