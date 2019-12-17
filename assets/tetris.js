@@ -22,8 +22,14 @@ let background = [];
 
 //
 const ONE_SECOND = 1000;
-let currentTetromino = [];
+
+//used for sideways movement
+
 let sidewaysFlag = false;
+
+//used for tetromino rotation
+let rotation = 0;
+let rotateFlag;
 
 addCoordinates = (array) => {
     for (let r = 0; r < array.length; r++) {
@@ -82,12 +88,13 @@ drawBorderLines = () => {
 }
 
 draw = (newRow) => {
-    if (!sidewaysFlag) {
+    if (!sidewaysFlag && !rotateFlag) {
         background.unshift(JSON.parse(JSON.stringify(newRow)));
         background.pop();
     }
     else {
         sidewaysFlag = false;
+        rotateFlag = false;
     }
     addCoordinates(background);
     ctx.clearRect(PADDING * 2, PADDING * 2, GAME_WIDTH - PADDING * 3, CANVAS_HEIGHT - 3 * PADDING);
@@ -144,8 +151,7 @@ createTetromino = (ones) => {
 }
 
 //key listener function
-keyDownHandler = (event) => {
-    sidewaysFlag = true;
+keyDownHandler = (event, rand, currentTetromino) => {
     var code = event.which;
     switch (code) {
         //space
@@ -153,6 +159,7 @@ keyDownHandler = (event) => {
             break;
         //right arrow
         case 39:
+            sidewaysFlag = true;
             currentTetromino.forEach(item => {
                 //if tetromino pressed against right wall
                 if (item[item.length - 1].status === 1) {
@@ -169,6 +176,8 @@ keyDownHandler = (event) => {
             break;
         //left arrow
         case 37:
+            sidewaysFlag = true;
+
             currentTetromino.forEach(item => {
                 //if tetromino pressed against left wall
                 if (item[0].status === 1) {
@@ -184,7 +193,60 @@ keyDownHandler = (event) => {
             break;
         //up arrow
         case 38:
+            rotateFlag = true;
+            rotation++;
+            //iTetromino has only two positions
+            if (rand === 0) {
+                if (rotation > 1) {
+                    rotation = 0;
+                }
+                //switching from vertical to horizontal
+                if (rotation === 0) {
+                    //if tetromino against left wall or one away from left wall, cant rotate
+                    if (currentTetromino[0][0].status === 1 || currentTetromino[0][1].status === 1
+                        //if tetromino against right wall
+                        || currentTetromino[0][BOXES_COLUMN_COUNT - 1].status === 1) {
+                        rotateFlag = false;
+                        return;
+                    }
 
+                    if (rotateFlag) {
+                        //find what column the '1's are on
+                        let columnIndex = currentTetromino[1].findIndex(x => x.status === 1);
+
+                        currentTetromino[0][columnIndex].status = 0;
+                        currentTetromino[1][columnIndex].status = 0;
+                        currentTetromino[2][columnIndex].status = 0;
+
+                        currentTetromino[3][columnIndex - 1].status = 1;
+                        currentTetromino[3][columnIndex - 2].status = 1;
+                        currentTetromino[3][columnIndex + 1].status = 1;
+
+                    }
+                }
+                else if (rotation === 1) {
+                    //if tetromino on bottom row
+                    if (background[background.length - 1][3].status === 1 || background[background.length - 1][7].status === 1
+                        //if tetromino on one from bottom row
+                        || background[background.length - 2][3].status === 1 || background[background.length - 2][7].status === 1
+                        //if tetromino on top row
+                        || background[0][3].status === 1 || background[0][7].status === 1) {
+                        rotateFlag = false;
+                        return;
+                    }
+
+                    if (rotateFlag) {
+                        for (let c = 0; c < currentTetromino[1].length; c++) {
+                            currentTetromino[3][c].status = 0;
+                        }
+                        for (let r = 0; r < 4; r++) {
+                            currentTetromino[r][6].status = 1;
+                        }
+
+                    }
+                }
+
+            }
             break;
         //down arrow
         case 40:
@@ -197,15 +259,16 @@ keyDownHandler = (event) => {
 window.onload = () => {
     let tetrominos = createTetrominos();
     let newRow = createNewRow();
+    let tempTetromnio;
+    let rand;
+    let currentTetromino = [];
+    rand = Math.round(Math.random() * (tetrominos.length - 1));
+    //rand = 0;
+    let tetromino = tetrominos[rand];
     createInitialBackgroundArray();
 
     //key listener
-    document.addEventListener("keydown", keyDownHandler, false);
-
-    
-    tetromino = getRandomTetromino(tetrominos);
-
-    let tempTetromnio;
+    document.addEventListener("keydown", function(){keyDownHandler(event, rand, currentTetromino);}, false);
 
     for (let r = tetromino.length - 1; r >= 0; r--) {
         tempTetromnio = JSON.parse(JSON.stringify(tetromino[r]));
@@ -213,9 +276,4 @@ window.onload = () => {
         background.unshift(tempTetromnio);
     }
     setInterval(function () { draw(newRow); }, ONE_SECOND);
-}
-
-function getRandomTetromino(tetrominos){
-    let rand = Math.round(Math.random() * (tetrominos.length - 1));
-    return tetrominos[rand];
 }
