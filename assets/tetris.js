@@ -30,8 +30,6 @@ let sidewaysFlag = false;
 //used for tetromino rotation
 let rotation = 0;
 let rotateFlag;
-let currentTetromino = [];
-let rand;
 
 addCoordinates = (array) => {
     for (let r = 0; r < array.length; r++) {
@@ -153,7 +151,7 @@ createTetromino = (ones) => {
 }
 
 //key listener function
-keyDownHandler = (event) => {
+keyDownHandler = (event, rand, currentTetromino) => {
     var code = event.which;
     switch (code) {
         //space
@@ -262,14 +260,15 @@ window.onload = () => {
     let tetrominos = createTetrominos();
     let newRow = createNewRow();
     let tempTetromnio;
-
+    let rand;
+    let currentTetromino = [];
     rand = Math.round(Math.random() * (tetrominos.length - 1));
     //rand = 0;
     let tetromino = tetrominos[rand];
     createInitialBackgroundArray();
 
     //key listener
-    document.addEventListener("keydown", keyDownHandler, false);
+    document.addEventListener("keydown", function(){keyDownHandler(event, rand, currentTetromino);}, false);
 
     for (let r = tetromino.length - 1; r >= 0; r--) {
         tempTetromnio = JSON.parse(JSON.stringify(tetromino[r]));
