@@ -18,17 +18,11 @@ const INNER_TO_OUTER_RATIO = 3.5;
 const BOXES_INNER_BOX_WIDTH = BOXES_INNER_BOX_HEIGHT = BOXES_SIZE - INNER_TO_OUTER_RATIO * 2 * BOXES_PADDING;
 
 //arrays
-let tetrominos = [];
 let background = [];
-let newRow = [];
-let flag;
 
 //
 const ONE_SECOND = 1000;
-let rightPressed = false;
-let leftPressed = false;
-let temp;
-let tempTetrino = [];
+let currentTetromino = [];
 let sidewaysFlag = false;
 
 addCoordinates = (array) => {
@@ -50,10 +44,11 @@ addCoordinates = (array) => {
 }
 
 createNewRow = () => {
+    let newRow = [];
     for (let c = 0; c < BOXES_COLUMN_COUNT; c++) {
         newRow[c] = { status: 0 };
     }
-    //addCoordinates(newRow);
+    return newRow;
 }
 
 drawBoxes = (array) => {
@@ -86,7 +81,7 @@ drawBorderLines = () => {
     ctx.strokeRect(PADDING, PADDING, GAME_WIDTH - PADDING * 2, CANVAS_HEIGHT - PADDING * 2);//for white background
 }
 
-draw = () => {
+draw = (newRow) => {
     if (!sidewaysFlag) {
         background.unshift(JSON.parse(JSON.stringify(newRow)));
         background.pop();
@@ -112,6 +107,7 @@ createInitialBackgroundArray = () => {
 }
 
 createTetrominos = () => {
+    let tetrominos = [];
     let iOnes = [{ r: 3, c: 3 }, { r: 3, c: 4 }, { r: 3, c: 5 }, { r: 3, c: 6 }];
     let jOnes = [{ r: 2, c: 3 }, { r: 3, c: 3 }, { r: 3, c: 4 }, { r: 3, c: 5 }];
     let lOnes = [{ r: 2, c: 5 }, { r: 3, c: 3 }, { r: 3, c: 4 }, { r: 3, c: 5 }];
@@ -127,6 +123,8 @@ createTetrominos = () => {
     tetrominos.push(createTetromino(sOnes));
     tetrominos.push(createTetromino(tOnes));
     tetrominos.push(createTetromino(zOnes));
+
+    return tetrominos;
 }
 
 createTetromino = (ones) => {
@@ -155,7 +153,7 @@ keyDownHandler = (event) => {
             break;
         //right arrow
         case 39:
-            tempTetrino.forEach(item => {
+            currentTetromino.forEach(item => {
                 //if tetromino pressed against right wall
                 if (item[item.length - 1].status === 1) {
                     sidewaysFlag = false;
@@ -164,14 +162,14 @@ keyDownHandler = (event) => {
             });
 
             if (sidewaysFlag) {
-                tempTetrino.forEach(item => {
+                currentTetromino.forEach(item => {
                     item.unshift(item.pop());
                 })
             }
             break;
         //left arrow
         case 37:
-            tempTetrino.forEach(item => {
+            currentTetromino.forEach(item => {
                 //if tetromino pressed against left wall
                 if (item[0].status === 1) {
                     sidewaysFlag = false;
@@ -179,7 +177,7 @@ keyDownHandler = (event) => {
                 }
             });
             if (sidewaysFlag) {
-                tempTetrino.forEach(item => {
+                currentTetromino.forEach(item => {
                     item.push(item.shift());
                 })
             }
@@ -195,33 +193,29 @@ keyDownHandler = (event) => {
     }
 };
 
-// keyUpHandler = (e) => {
-//     if (e.key == "Right" || e.key == "ArrowRight") {
-//         rightPressed = false;
-//     }
-//     else if (e.key == "Left" || e.key == "ArrowLeft") {
-//         leftPressed = false;
-//     }
-// }
-
 //drawBorderLines();
 window.onload = () => {
-    createTetrominos();
-    createNewRow();
-    //drawBoxes(newRow);
+    let tetrominos = createTetrominos();
+    let newRow = createNewRow();
     createInitialBackgroundArray();
+
     //key listener
     document.addEventListener("keydown", keyDownHandler, false);
-    //   document.addEventListener("keyup", keyUpHandler, false);
 
-    let rand = Math.round(Math.random() * (tetrominos.length - 1));
-    let tetromino = tetrominos[rand];
+    
+    tetromino = getRandomTetromino(tetrominos);
 
+    let tempTetromnio;
 
     for (let r = tetromino.length - 1; r >= 0; r--) {
-        temp = JSON.parse(JSON.stringify(tetromino[r]));
-        tempTetrino.unshift(temp);
-        background.unshift(temp);
+        tempTetromnio = JSON.parse(JSON.stringify(tetromino[r]));
+        currentTetromino.unshift(tempTetromnio);
+        background.unshift(tempTetromnio);
     }
-    setInterval(draw, ONE_SECOND);
+    setInterval(function () { draw(newRow); }, ONE_SECOND);
+}
+
+function getRandomTetromino(tetrominos){
+    let rand = Math.round(Math.random() * (tetrominos.length - 1));
+    return tetrominos[rand];
 }
