@@ -123,30 +123,31 @@ createTetrominos = () => {
     let tOnes = [{ r: 2, c: 4 }, { r: 3, c: 3 }, { r: 3, c: 4 }, { r: 3, c: 5 }];
     let zOnes = [{ r: 2, c: 3 }, { r: 2, c: 4 }, { r: 3, c: 4 }, { r: 3, c: 5 }];
 
-    tetrominos.push(createTetromino(iOnes));
-    tetrominos.push(createTetromino(jOnes));
-    tetrominos.push(createTetromino(lOnes));
-    tetrominos.push(createTetromino(oOnes));
-    tetrominos.push(createTetromino(sOnes));
-    tetrominos.push(createTetromino(tOnes));
-    tetrominos.push(createTetromino(zOnes));
+    tetrominos.push(createTetrominoObject(3, 6, 5, 'i', iOnes));
+    tetrominos.push(createTetrominoObject(3, 6, 5, 'i', jOnes));
+    tetrominos.push(createTetrominoObject(3, 6, 5, 'i', lOnes));
+    tetrominos.push(createTetrominoObject(3, 6, 5, 'i', oOnes));
+    tetrominos.push(createTetrominoObject(3, 6, 5, 'i', sOnes));
+    tetrominos.push(createTetrominoObject(3, 6, 5, 'i', tOnes));
+    tetrominos.push(createTetrominoObject(3, 6, 5, 'i', zOnes));
 
     return tetrominos;
 }
 
-createTetromino = (ones) => {
-    let tetromino = [];
+createTetrominoObject = (farLeftCLocatoin, farRightCLocation, rotationCLocation, letter, ones) => {
+    let tetrominoMatrix = [];
     for (let r = 0; r < 4; r++) {
-        tetromino[r] = [];
+        tetrominoMatrix[r] = [];
         for (let c = 0; c < BOXES_COLUMN_COUNT; c++) {
-            tetromino[r][c] = { status: 0 };
+            tetrominoMatrix[r][c] = { status: 0 };
         }
     }
 
     ones.forEach(item => {
-        tetromino[item.r][item.c].status = 1;
+        tetrominoMatrix[item.r][item.c].status = 1;
     })
 
+    tetromino = new Tetromino(farLeftCLocatoin, farRightCLocation, rotationCLocation, letter, tetrominoMatrix);
     return tetromino;
 }
 
@@ -263,17 +264,38 @@ window.onload = () => {
     let rand;
     let currentTetromino = [];
     rand = Math.round(Math.random() * (tetrominos.length - 1));
-    //rand = 0;
+    
     let tetromino = tetrominos[rand];
     createInitialBackgroundArray();
 
     //key listener
-    document.addEventListener("keydown", function(){keyDownHandler(event, rand, currentTetromino);}, false);
+    document.addEventListener("keydown", function () { keyDownHandler(event, rand, currentTetromino); }, false);
 
-    for (let r = tetromino.length - 1; r >= 0; r--) {
-        tempTetromnio = JSON.parse(JSON.stringify(tetromino[r]));
+    for (let r = tetromino.tetrominoMatrix.length - 1; r >= 0; r--) {
+        tempTetromnio = JSON.parse(JSON.stringify(tetromino.tetrominoMatrix[r]));
         currentTetromino.unshift(tempTetromnio);
         background.unshift(tempTetromnio);
     }
     setInterval(function () { draw(newRow); }, ONE_SECOND);
+}
+
+class Tetromino {
+    letter;
+    tetrominoMatrix;
+
+    farLeftCLocatoin;
+    farRightCLocation;
+    rotationCLocation;
+    rotationState = 0;
+
+    rotate() { }
+
+    constructor(farLeftCLocatoin, farRightCLocation, rotationCLocation, letter, tetrominoMatrix) {
+        this.farLeftCLocatoin = farLeftCLocatoin;
+        this.farRightCLocation = farRightCLocation;
+        this.rotationCLocation = rotationCLocation;
+        this.letter = letter;
+        this.tetrominoMatrix = tetrominoMatrix;
+    }
+
 }
