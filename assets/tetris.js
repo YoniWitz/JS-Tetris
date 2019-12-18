@@ -111,7 +111,7 @@ createTetrominos = () => {
     let oOnes = [{ r: 2, c: 4 }, { r: 2, c: 5 }, { r: 3, c: 4 }, { r: 3, c: 5 }];
     let sOnes = [{ r: 1, c: 4 }, { r: 1, c: 5 }, { r: 2, c: 3 }, { r: 2, c: 4 }];
     let tOnes = [{ r: 2, c: 4 }, { r: 3, c: 3 }, { r: 3, c: 4 }, { r: 3, c: 5 }];
-    let zOnes = [{ r: 2, c: 3 }, { r: 2, c: 4 }, { r: 3, c: 4 }, { r: 3, c: 5 }];
+    let zOnes = [{ r: 1, c: 3 }, { r: 1, c: 4 }, { r: 2, c: 4 }, { r: 2, c: 5 }];
 
     tetrominos.push(createTetrominoObject(3, 6, 5, 'i', iOnes));
     tetrominos.push(createTetrominoObject(3, 5, 5, 'j', jOnes));
@@ -119,7 +119,7 @@ createTetrominos = () => {
     tetrominos.push(createTetrominoObject(4, 5, 5, 'o', oOnes));
     tetrominos.push(createTetrominoObject(3, 5, 4, 's', sOnes));
     tetrominos.push(createTetrominoObject(3, 5, 5, 't', tOnes));
-    tetrominos.push(createTetrominoObject(3, 5, 5, 'z', zOnes));
+    tetrominos.push(createTetrominoObject(3, 5, 4, 'z', zOnes));
 
     return tetrominos;
 }
@@ -174,7 +174,7 @@ window.onload = () => {
 
     rand = Math.round(Math.random() * (tetrominos.length - 1));
     if (DEBUG) {
-        rand = 4;
+        rand = 6;
     }
 
     let currentTetromino = tetrominos[rand];
@@ -230,7 +230,7 @@ class Tetromino {
     }
 
     rotate() {
-        
+
 
         if (this.letter === 'i') {
             //iTetromino has only two positions
@@ -261,7 +261,7 @@ class Tetromino {
                 }
             }
             //switching from vertical to horizontal
-            
+
             else {
                 //if iTetromino on bottom 2 rows row if tetromino on top row
                 if (this.lowestRLocation >= BOXES_ROW_COUNT - 2 || this.lowestRLocation === 0) {
@@ -271,7 +271,7 @@ class Tetromino {
                     this.rotationState++;
                     this.rotateFlag = true;
                     this.farLeftCLocation = this.farRightCLocation = this.rotationCLocation;
-                    
+
                     //erase horizontal
                     for (let c = 0; c < this.tetrominoMatrix[0].length; c++) {
                         this.tetrominoMirror[1][c].status = 0;
@@ -297,18 +297,18 @@ class Tetromino {
                 else {
                     this.rotationState++;
                     this.rotateFlag = true;
-                    
+
                     this.farRightCLocation = this.rotationCLocation + 1;
 
                     this.tetrominoMirror[0][this.rotationCLocation - 1].status = 0;
                     this.tetrominoMirror[1][this.rotationCLocation - 1].status = 0;
                     this.tetrominoMirror[1][this.farRightCLocation].status = 1;
-                    this.tetrominoMirror[2][this.rotationCLocation -1].status = 1;
+                    this.tetrominoMirror[2][this.rotationCLocation - 1].status = 1;
                 }
             }
             //switching from horizontal to vertical
             else {
-                //if sTetromino on on top row
+                //if sTetromino on top row, can't rotate
                 if (this.lowestRLocation === 0) {
                     //do nothing
                 }
@@ -316,11 +316,51 @@ class Tetromino {
                     this.rotationState++;
                     this.rotateFlag = true;
                     this.farRightCLocation = this.rotationCLocation;
-                    
+
                     this.tetrominoMirror[0][this.rotationCLocation - 1].status = 1;
                     this.tetrominoMirror[1][this.rotationCLocation - 1].status = 1;
                     this.tetrominoMirror[1][this.rotationCLocation + 1].status = 0;
-                    this.tetrominoMirror[2][this.rotationCLocation -1].status = 0;
+                    this.tetrominoMirror[2][this.rotationCLocation - 1].status = 0;
+                }
+            }
+        }
+        if (this.letter === 'z') {
+            //zTetromino has only two positions
+            if (this.rotationState > 1) {
+                this.rotationState = 0;
+            }
+            //switching from vertical to horizontal
+            if (this.rotationState === 1) {
+                //if zTetromino against left wall, cant rotate
+                if (this.farLeftCLocation === 0) {
+                }
+                else {
+                    this.rotationState++;
+                    this.rotateFlag = true;
+
+                    this.farLeftCLocation = this.rotationCLocation - 1;
+
+                    this.tetrominoMirror[0][this.rotationCLocation + 1].status = 0;
+                    this.tetrominoMirror[1][this.rotationCLocation + 1].status = 0;
+                    this.tetrominoMirror[1][this.rotationCLocation - 1].status = 1;
+                    this.tetrominoMirror[2][this.rotationCLocation + 1].status = 1;
+                }
+            }
+            //switching from horizontal to vertical
+            else {
+                //if zTetromino on top row, can't rotate
+                if (this.lowestRLocation === 0) {
+                    //do nothing
+                }
+                else {
+                    this.rotationState++;
+                    this.rotateFlag = true;
+                    this.farLeftCLocation = this.rotationCLocation;
+
+                    this.tetrominoMirror[0][this.rotationCLocation + 1].status = 1;
+                    this.tetrominoMirror[1][this.rotationCLocation - 1].status = 0;
+                    this.tetrominoMirror[1][this.rotationCLocation + 1].status = 1;
+                    this.tetrominoMirror[2][this.rotationCLocation + 1].status = 0;
                 }
             }
         }
