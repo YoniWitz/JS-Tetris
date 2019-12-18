@@ -174,7 +174,7 @@ window.onload = () => {
 
     rand = Math.round(Math.random() * (tetrominos.length - 1));
     if (DEBUG) {
-        rand = 0;
+        rand = 4;
     }
 
     let currentTetromino = tetrominos[rand];
@@ -263,7 +263,7 @@ class Tetromino {
             //switching from vertical to horizontal
             
             else {
-                //if tetromino on bottom 2 rows row if tetromino on top row
+                //if iTetromino on bottom 2 rows row if tetromino on top row
                 if (this.lowestRLocation >= BOXES_ROW_COUNT - 2 || this.lowestRLocation === 0) {
                     //do nothing
                 }
@@ -300,34 +300,27 @@ class Tetromino {
                     
                     this.farRightCLocation = this.rotationCLocation + 1;
 
-                    for (let r = 0; r < this.tetrominoMatrix.length; r++) {
-                        this.tetrominoMirror[r][this.rotationCLocation].status = 0;
-                    }
-
-                    this.tetrominoMirror[1][this.rotationCLocation - 1].status = 1;
-                    this.tetrominoMirror[1][this.rotationCLocation].status = 1;
-                    this.tetrominoMirror[1][this.farLeftCLocation].status = 1;
+                    this.tetrominoMirror[0][this.rotationCLocation - 1].status = 0;
+                    this.tetrominoMirror[1][this.rotationCLocation - 1].status = 0;
                     this.tetrominoMirror[1][this.farRightCLocation].status = 1;
+                    this.tetrominoMirror[2][this.rotationCLocation -1].status = 1;
                 }
             }
             //switching from horizontal to vertical
             else {
-                //if tetromino on bottom 2 rows row if tetromino on top row
-                if (this.lowestRLocation >= BOXES_ROW_COUNT - 2 || this.lowestRLocation === 0) {
+                //if sTetromino on on top row
+                if (this.lowestRLocation === 0) {
                     //do nothing
                 }
                 else {
                     this.rotationState++;
                     this.rotateFlag = true;
-                    this.farLeftCLocation = this.farRightCLocation = this.rotationCLocation;
+                    this.farRightCLocation = this.rotationCLocation;
                     
-
-                    for (let c = 0; c < this.tetrominoMatrix[0].length; c++) {
-                        this.tetrominoMirror[1][c].status = 0;
-                    }
-                    for (let r = 0; r < this.tetrominoMatrix.length; r++) {
-                        this.tetrominoMirror[r][this.rotationCLocation].status = 1;
-                    }
+                    this.tetrominoMirror[0][this.rotationCLocation - 1].status = 1;
+                    this.tetrominoMirror[1][this.rotationCLocation - 1].status = 1;
+                    this.tetrominoMirror[1][this.rotationCLocation + 1].status = 0;
+                    this.tetrominoMirror[2][this.rotationCLocation -1].status = 0;
                 }
             }
         }
