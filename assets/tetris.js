@@ -106,16 +106,16 @@ createInitialBackgroundArray = () => {
 createTetrominos = () => {
     let tetrominos = [];
     let iOnes = [{ r: 1, c: 3 }, { r: 1, c: 4 }, { r: 1, c: 5 }, { r: 1, c: 6 }];
-    let jOnes = [{ r: 2, c: 3 }, { r: 3, c: 3 }, { r: 3, c: 4 }, { r: 3, c: 5 }];
-    let lOnes = [{ r: 2, c: 5 }, { r: 3, c: 3 }, { r: 3, c: 4 }, { r: 3, c: 5 }];
+    let jOnes = [{ r: 1, c: 3 }, { r: 2, c: 3 }, { r: 2, c: 4 }, { r: 2, c: 5 }];
+    let lOnes = [{ r: 1, c: 5 }, { r: 2, c: 3 }, { r: 2, c: 4 }, { r: 2, c: 5 }];
     let oOnes = [{ r: 2, c: 4 }, { r: 2, c: 5 }, { r: 3, c: 4 }, { r: 3, c: 5 }];
     let sOnes = [{ r: 1, c: 4 }, { r: 1, c: 5 }, { r: 2, c: 3 }, { r: 2, c: 4 }];
     let tOnes = [{ r: 1, c: 4 }, { r: 2, c: 3 }, { r: 2, c: 4 }, { r: 2, c: 5 }];
     let zOnes = [{ r: 1, c: 3 }, { r: 1, c: 4 }, { r: 2, c: 4 }, { r: 2, c: 5 }];
 
     tetrominos.push(createTetrominoObject(3, 6, 5, 'i', iOnes));
-    tetrominos.push(createTetrominoObject(3, 5, 5, 'j', jOnes));
-    tetrominos.push(createTetrominoObject(3, 5, 5, 'l', lOnes));
+    tetrominos.push(createTetrominoObject(3, 5, 4, 'j', jOnes));
+    tetrominos.push(createTetrominoObject(3, 5, 4, 'l', lOnes));
     tetrominos.push(createTetrominoObject(4, 5, 5, 'o', oOnes));
     tetrominos.push(createTetrominoObject(3, 5, 4, 's', sOnes));
     tetrominos.push(createTetrominoObject(3, 5, 4, 't', tOnes));
@@ -174,7 +174,7 @@ window.onload = () => {
 
     rand = Math.round(Math.random() * (tetrominos.length - 1));
     if (DEBUG) {
-        rand = 0;
+        rand = 2;
     }
 
     let currentTetromino = tetrominos[rand];
@@ -209,7 +209,7 @@ class Tetromino {
 
     moveRight() {
         //if tetromino not pressed against right wall
-        if (this.farRightCLocation < (BOXES_COLUMN_COUNT - 1)) {
+        if (this.farRightCLocation < (this.length - 1)) {
             this.sidewaysMovementFlag = true;
             this.farRightCLocation++; this.farLeftCLocation++; this.rotationCLocation++;
             this.tetrominoMirror.forEach(item => {
@@ -256,8 +256,8 @@ class Tetromino {
                     //create vertical
                     this.tetrominoMirror[1][this.rotationCLocation - 1].status = 1;
                     this.tetrominoMirror[1][this.rotationCLocation].status = 1;
-                    this.tetrominoMirror[1][this.farLeftCLocation].status = 1;
-                    this.tetrominoMirror[1][this.farRightCLocation].status = 1;
+                    this.tetrominoMirror[1][this.rotationCLocation - 2].status = 1;
+                    this.tetrominoMirror[1][this.rotationCLocation + 1].status = 1;
                 }
             }
             //switching from vertical to horizontal
@@ -302,7 +302,7 @@ class Tetromino {
 
                     this.tetrominoMirror[0][this.rotationCLocation - 1].status = 0;
                     this.tetrominoMirror[1][this.rotationCLocation - 1].status = 0;
-                    this.tetrominoMirror[1][this.farRightCLocation].status = 1;
+                    this.tetrominoMirror[1][this.rotationCLocation + 1].status = 1;
                     this.tetrominoMirror[2][this.rotationCLocation - 1].status = 1;
                 }
             }
@@ -385,7 +385,7 @@ class Tetromino {
                 }
             }
             //switching from vertical to horizontal
-            else if(this.rotationState === 3){
+            else if (this.rotationState === 3) {
                 //if zTetromino against right wall, can't rotate
                 if (this.farRightCLocation === this.length - 1) {
                     //do nothing
@@ -402,7 +402,7 @@ class Tetromino {
                 }
             }
             //switching from vertical to horizontal
-            else if(this.rotationState === 0){
+            else if (this.rotationState === 0) {
                 //if zTetromino on top row, can't rotate
                 if (this.lowestRLocation === 0) {
                     //do nothing
@@ -415,10 +415,10 @@ class Tetromino {
                     this.tetrominoMirror[0][this.rotationCLocation].status = 1;
                     this.tetrominoMirror[1][this.rotationCLocation + 1].status = 1;
                     this.tetrominoMirror[2][this.rotationCLocation + 1].status = 0;
-                    this.tetrominoMirror[2][this.rotationCLocation -1].status = 0;
+                    this.tetrominoMirror[2][this.rotationCLocation - 1].status = 0;
                 }
             }
-            else if(this.rotationState === 1){
+            else if (this.rotationState === 1) {
                 //if zTetromino against left wall, can't rotate
                 if (this.farLeftCLocation === 0) {
                     //do nothing
@@ -430,6 +430,91 @@ class Tetromino {
 
                     this.tetrominoMirror[0][this.rotationCLocation].status = 0;
                     this.tetrominoMirror[1][this.rotationCLocation - 1].status = 1;
+                }
+            }
+        }
+        if (this.letter === 'l') {
+            //lTetromino has four positions
+            if (this.rotationState > 3) {
+                this.rotationState = 0;
+            }
+            //rotate from horizontal to vertical
+            if (this.rotationState === 0) {
+                //if lTetromino against top wall, cant rotate
+                if (this.lowestRLocation === 0) {
+                }
+                else {
+                    this.rotationState++;
+                    this.rotateFlag = true;
+
+                    this.farLeftCLocation = this.rotationCLocation;
+
+                    this.tetrominoMirror[0][this.rotationCLocation].status = 1;
+                    this.tetrominoMirror[1][this.rotationCLocation].status = 1;
+                    this.tetrominoMirror[1][this.rotationCLocation + 1].status = 0;
+                    this.tetrominoMirror[2][this.rotationCLocation - 1].status = 0;
+                }
+            }
+            //switching from vertical to horizontal
+            else if (this.rotationState === 1) {
+                //if zTetromino against left wall, can't rotate
+                if (this.farLeftCLocation === 0) {
+                    //do nothing
+                }
+                else {
+                    this.rotationState++;
+                    this.rotateFlag = true;
+                    this.farLeftCLocation = this.rotationCLocation - 1;
+
+                    this.tetrominoMirror[0][this.rotationCLocation].status = 0;
+
+                    this.tetrominoMirror[1][this.rotationCLocation - 1].status = 1;
+                    this.tetrominoMirror[1][this.rotationCLocation + 1].status = 1;
+
+                    this.tetrominoMirror[2][this.rotationCLocation + 1].status = 0;
+                    this.tetrominoMirror[2][this.rotationCLocation].status = 0;
+                    this.tetrominoMirror[2][this.rotationCLocation - 1].status = 1;
+                }
+            }
+            //switching from vertical to horizontal
+            else if (this.rotationState === 2) {
+                //if lTetromino on top row, can't rotate
+                if (this.lowestRLocation === 0) {
+                    //do nothing
+                }
+                else {
+                    this.rotationState++;
+                    this.rotateFlag = true;
+                    this.farRightCLocation = this.rotationCLocation;
+
+                    this.tetrominoMirror[0][this.rotationCLocation].status = 1;
+                    this.tetrominoMirror[0][this.rotationCLocation - 1].status = 1;
+
+                    this.tetrominoMirror[1][this.rotationCLocation + 1].status = 0;
+                    this.tetrominoMirror[1][this.rotationCLocation - 1].status = 0;
+
+                    this.tetrominoMirror[2][this.rotationCLocation].status = 1;
+                    this.tetrominoMirror[2][this.rotationCLocation - 1].status = 0;
+                }
+            }
+            else if (this.rotationState === 3) {
+                //if sTetromino against right wall, can't rotate
+                if (this.farRightCLocation === this.length - 1) {
+                    //do nothing
+                }
+                else {
+                    this.rotationState++;
+                    this.rotateFlag = true;
+                    this.farRightCLocation = this.rotationCLocation + 1;
+
+                    this.tetrominoMirror[0][this.rotationCLocation].status = 0;
+                    this.tetrominoMirror[0][this.rotationCLocation - 1].status = 0;
+
+                    this.tetrominoMirror[1][this.rotationCLocation + 1].status = 1;
+                    this.tetrominoMirror[1][this.rotationCLocation].status = 0;
+
+                    this.tetrominoMirror[2][this.rotationCLocation - 1].status = 1;
+                    this.tetrominoMirror[2][this.rotationCLocation + 1].status = 1;
                 }
             }
         }
