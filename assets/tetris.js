@@ -18,56 +18,6 @@ const INNER_TO_OUTER_RATIO = 3.5;
 const BOXES_INNER_BOX_WIDTH = BOXES_INNER_BOX_HEIGHT = BOXES_SIZE - INNER_TO_OUTER_RATIO * 2 * BOXES_PADDING;
 
 const ONE_SECOND = 1000;
-//
-let background = [];
-
-addCoordinates = (array) => {
-    for (let r = 0; r < array.length; r++) {
-        for (let c = 0; c < array[r].length; c++) {
-            let outerBoxX = PADDING * 2 + BOXES_PADDING * (1 + 2 * c) + (c * BOXES_BORDER_WIDTH);
-            let outerBoxY = PADDING * 2 + BOXES_PADDING * (1 + 2 * r) + (r * BOXES_BORDER_HEIGHT);
-
-            let innerBoxX = PADDING * 2 + INNER_TO_OUTER_RATIO * BOXES_PADDING * (1 + 2 * c) + (c * BOXES_INNER_BOX_WIDTH);
-            let innerBoxY = PADDING * 2 + INNER_TO_OUTER_RATIO * BOXES_PADDING * (1 + 2 * r) + (r * BOXES_INNER_BOX_HEIGHT);
-
-            array[r][c].outerX = outerBoxX;
-            array[r][c].outerY = outerBoxY;
-
-            array[r][c].innerX = innerBoxX;
-            array[r][c].innerY = innerBoxY;
-        }
-    }
-}
-
-createNewRow = () => {
-    let newRow = [];
-    for (let c = 0; c < BOXES_COLUMN_COUNT; c++) {
-        newRow[c] = { status: 0 };
-    }
-    return newRow;
-}
-
-drawBoxes = (array) => {
-    for (let r = 0; r < BOXES_ROW_COUNT; r++) {
-        for (let c = 0; c < BOXES_COLUMN_COUNT; c++) {
-            if (array[r][c].status === 0) {
-                color = "gray"
-            }
-            else {
-                color = "black"
-            }
-
-            ctx.beginPath();
-            //outer box
-            ctx.strokeRect(array[r][c].outerX, array[r][c].outerY, BOXES_BORDER_WIDTH, BOXES_BORDER_HEIGHT);
-            //inner box
-            ctx.rect(array[r][c].innerX, array[r][c].innerY, BOXES_INNER_BOX_WIDTH, BOXES_INNER_BOX_HEIGHT);
-            ctx.fillStyle = color;
-            ctx.fill();
-            ctx.closePath();
-        }
-    }
-}
 
 //static board stuff
 drawBorderLines = () => {
@@ -77,30 +27,20 @@ drawBorderLines = () => {
     ctx.strokeRect(PADDING, PADDING, GAME_WIDTH - PADDING * 2, CANVAS_HEIGHT - PADDING * 2);//for white background
 }
 
-draw = (newRow, currentTetromino) => {
-    if (!currentTetromino.sidewaysMovementFlag && !currentTetromino.rotateFlag) {
-        background.unshift(JSON.parse(JSON.stringify(newRow)));
-        background.pop();
+draw = (currentTetromino, background) => {
+    if (!currentTetromino.keydownFlag) {
+        background.backgroundMatrix.unshift(JSON.parse(JSON.stringify(background.newRow)));
+        background.backgroundMatrix.pop();
         currentTetromino.lowestRLocation++;
     }
     else {
-        currentTetromino.sidewaysMovementFlag = false;
-        currentTetromino.rotateFlag = false
+        currentTetromino.keydownFlag = false;
     }
 
-    addCoordinates(background);
+    background.addCoordinates();
     ctx.clearRect(PADDING * 2, PADDING * 2, GAME_WIDTH - PADDING * 3, CANVAS_HEIGHT - 3 * PADDING);
-    drawBoxes(background);
+    background.drawBoxes();
     // requestAnimationFrame(draw);
-}
-
-createInitialBackgroundArray = () => {
-    for (let r = 0; r < BOXES_ROW_COUNT; r++) {
-        background[r] = [];
-        for (let c = 0; c < BOXES_COLUMN_COUNT; c++) {
-            background[r][c] = { status: 0 };
-        }
-    }
 }
 
 createTetrominos = () => {
@@ -168,17 +108,75 @@ keyDownHandler = (event, currentTetromino) => {
 //drawBorderLines();
 window.onload = () => {
     let tetrominos = createTetrominos();
-    let newRow = createNewRow();
+    
     let tempTetromino;
     let rand;
 
+    let background = {
+        backgroundMatrix: [],
+        newRow : [],
+
+        createNewRow : function(){
+            for (let c = 0; c < BOXES_COLUMN_COUNT; c++) {
+                this.newRow[c] = { status: 0 };
+            }
+        },
+        createInitialbackgroundMatrix : function() {           
+            for (let r = 0; r < BOXES_ROW_COUNT; r++) {
+                this.backgroundMatrix[r] = [];
+                for (let c = 0; c < BOXES_COLUMN_COUNT; c++) {
+                    this.backgroundMatrix[r][c] = { status: 0 };
+                }
+            }
+        },
+        drawBoxes : function() {
+            for (let r = 0; r < BOXES_ROW_COUNT; r++) {
+                for (let c = 0; c < BOXES_COLUMN_COUNT; c++) {
+                    if (this.backgroundMatrix[r][c].status === 0) {
+                        color = "gray"
+                    }
+                    else {
+                        color = "black"
+                    }
+        
+                    ctx.beginPath();
+                    //outer box
+                    ctx.strokeRect(this.backgroundMatrix[r][c].outerX, this.backgroundMatrix[r][c].outerY, BOXES_BORDER_WIDTH, BOXES_BORDER_HEIGHT);
+                    //inner box
+                    ctx.rect(this.backgroundMatrix[r][c].innerX, this.backgroundMatrix[r][c].innerY, BOXES_INNER_BOX_WIDTH, BOXES_INNER_BOX_HEIGHT);
+                    ctx.fillStyle = color;
+                    ctx.fill();
+                    ctx.closePath();
+                }
+            }
+        },
+        addCoordinates : function() {
+            for (let r = 0; r < this.backgroundMatrix.length; r++) {
+                for (let c = 0; c < this.backgroundMatrix[r].length; c++) {
+                    let outerBoxX = PADDING * 2 + BOXES_PADDING * (1 + 2 * c) + (c * BOXES_BORDER_WIDTH);
+                    let outerBoxY = PADDING * 2 + BOXES_PADDING * (1 + 2 * r) + (r * BOXES_BORDER_HEIGHT);
+        
+                    let innerBoxX = PADDING * 2 + INNER_TO_OUTER_RATIO * BOXES_PADDING * (1 + 2 * c) + (c * BOXES_INNER_BOX_WIDTH);
+                    let innerBoxY = PADDING * 2 + INNER_TO_OUTER_RATIO * BOXES_PADDING * (1 + 2 * r) + (r * BOXES_INNER_BOX_HEIGHT);
+        
+                    this.backgroundMatrix[r][c].outerX = outerBoxX;
+                    this.backgroundMatrix[r][c].outerY = outerBoxY;
+        
+                    this.backgroundMatrix[r][c].innerX = innerBoxX;
+                    this.backgroundMatrix[r][c].innerY = innerBoxY;
+                }
+            }
+        }
+    };
+
     rand = Math.round(Math.random() * (tetrominos.length - 1));
     if (DEBUG) {
-        rand = 1;
+        background.rand = 1;
     }
 
     let currentTetromino = tetrominos[rand];
-    createInitialBackgroundArray();
+    background.createInitialbackgroundMatrix();
+    background.createNewRow();
 
     //key listener
     document.addEventListener("keydown", function (event) { keyDownHandler(event, currentTetromino); }, false);
@@ -186,9 +184,9 @@ window.onload = () => {
     for (let r = currentTetromino.tetrominoMatrix.length - 1; r >= 0; r--) {
         tempTetromino = JSON.parse(JSON.stringify(currentTetromino.tetrominoMatrix[r]));
         currentTetromino.tetrominoMirror.unshift(tempTetromino)
-        background.unshift(tempTetromino);
+        background.backgroundMatrix.unshift(tempTetromino);
     }
-    setInterval(function () { draw(newRow, currentTetromino); }, ONE_SECOND);
+    setInterval(function () { draw(currentTetromino, background); }, ONE_SECOND);
 }
 
 class Tetromino {
@@ -204,14 +202,15 @@ class Tetromino {
 
     length;
 
-    sidewaysMovementFlag = false;
-    rotateFlag = false;
+    keydownFlag = false;
 
     moveRight() {
         //if tetromino not pressed against right wall
         if (this.farRightCLocation < (this.length - 1)) {
-            this.sidewaysMovementFlag = true;
+            this.keydownFlag = true;
+
             this.farRightCLocation++; this.farLeftCLocation++; this.rotationCLocation++;
+
             this.tetrominoMirror.forEach(item => {
                 item.unshift(item.pop());
             })
@@ -222,8 +221,10 @@ class Tetromino {
     moveLeft() {
         //if tetromino not pressed against left wall
         if (this.farLeftCLocation > 0) {
-            this.sidewaysMovementFlag = true;
+            this.keydownFlag = true;
+
             this.farRightCLocation--; this.farLeftCLocation--; this.rotationCLocation--;
+
             this.tetrominoMirror.forEach(item => {
                 item.push(item.shift());
             })
@@ -244,7 +245,8 @@ class Tetromino {
                 }
                 else {
                     this.rotationState++;
-                    this.rotateFlag = true;
+                    this.keydownFlag = true;
+
                     this.farLeftCLocation = this.rotationCLocation - 2;
                     this.farRightCLocation = this.rotationCLocation + 1;
 
@@ -269,7 +271,8 @@ class Tetromino {
                 }
                 else {
                     this.rotationState++;
-                    this.rotateFlag = true;
+                    this.keydownFlag = true;
+
                     this.farLeftCLocation = this.farRightCLocation = this.rotationCLocation;
 
                     //erase horizontal
@@ -296,7 +299,7 @@ class Tetromino {
                 }
                 else {
                     this.rotationState++;
-                    this.rotateFlag = true;
+                    this.keydownFlag = true;
 
                     this.farRightCLocation = this.rotationCLocation + 1;
 
@@ -316,7 +319,8 @@ class Tetromino {
                 }
                 else {
                     this.rotationState++;
-                    this.rotateFlag = true;
+                    this.keydownFlag = true;
+
                     this.farRightCLocation = this.rotationCLocation;
 
                     this.tetrominoMirror[0][this.rotationCLocation - 1].status = 1;
@@ -340,7 +344,7 @@ class Tetromino {
                 }
                 else {
                     this.rotationState++;
-                    this.rotateFlag = true;
+                    this.keydownFlag = true;
 
                     this.farLeftCLocation = this.rotationCLocation - 1;
 
@@ -360,7 +364,8 @@ class Tetromino {
                 }
                 else {
                     this.rotationState++;
-                    this.rotateFlag = true;
+                    this.keydownFlag = true;
+
                     this.farLeftCLocation = this.rotationCLocation;
 
                     this.tetrominoMirror[0][this.rotationCLocation + 1].status = 1;
@@ -384,7 +389,7 @@ class Tetromino {
                 }
                 else {
                     this.rotationState++;
-                    this.rotateFlag = true;
+                    this.keydownFlag = true;
 
                     this.farRightCLocation = this.rotationCLocation;
 
@@ -401,7 +406,8 @@ class Tetromino {
                 }
                 else {
                     this.rotationState++;
-                    this.rotateFlag = true;
+                    this.keydownFlag = true;
+
                     this.farRightCLocation = this.rotationCLocation + 1;
 
                     this.tetrominoMirror[0][this.rotationCLocation].status = 0;
@@ -420,7 +426,8 @@ class Tetromino {
                 }
                 else {
                     this.rotationState++;
-                    this.rotateFlag = true;
+                    this.keydownFlag = true;
+
                     this.farLeftCLocation = this.rotationCLocation;
 
                     this.tetrominoMirror[0][this.rotationCLocation].status = 1;
@@ -438,7 +445,8 @@ class Tetromino {
                 }
                 else {
                     this.rotationState++;
-                    this.rotateFlag = true;
+                    this.keydownFlag = true;
+
                     this.farLeftCLocation = this.rotationCLocation - 1;
 
                     this.tetrominoMirror[0][this.rotationCLocation].status = 0;
@@ -459,7 +467,7 @@ class Tetromino {
                 }
                 else {
                     this.rotationState++;
-                    this.rotateFlag = true;
+                    this.keydownFlag = true;
 
                     this.farLeftCLocation = this.rotationCLocation;
 
@@ -479,7 +487,8 @@ class Tetromino {
                 }
                 else {
                     this.rotationState++;
-                    this.rotateFlag = true;
+                    this.keydownFlag = true;
+
                     this.farLeftCLocation = this.rotationCLocation - 1;
 
                     this.tetrominoMirror[0][this.rotationCLocation].status = 0;
@@ -500,7 +509,8 @@ class Tetromino {
                 }
                 else {
                     this.rotationState++;
-                    this.rotateFlag = true;
+                    this.keydownFlag = true;
+
                     this.farRightCLocation = this.rotationCLocation;
 
                     this.tetrominoMirror[0][this.rotationCLocation].status = 1;
@@ -520,7 +530,8 @@ class Tetromino {
                 }
                 else {
                     this.rotationState++;
-                    this.rotateFlag = true;
+                    this.keydownFlag = true;
+
                     this.farRightCLocation = this.rotationCLocation + 1;
 
                     this.tetrominoMirror[0][this.rotationCLocation].status = 0;
@@ -546,7 +557,7 @@ class Tetromino {
                 }
                 else {
                     this.rotationState++;
-                    this.rotateFlag = true;
+                    this.keydownFlag = true;
 
                     this.farLeftCLocation = this.rotationCLocation;
 
@@ -568,7 +579,8 @@ class Tetromino {
                 }
                 else {
                     this.rotationState++;
-                    this.rotateFlag = true;
+                    this.keydownFlag = true;
+
                     this.farLeftCLocation = this.rotationCLocation - 1;
 
                     this.tetrominoMirror[0][this.rotationCLocation +  1].status = 0;
@@ -589,7 +601,8 @@ class Tetromino {
                 }
                 else {
                     this.rotationState++;
-                    this.rotateFlag = true;
+                    this.keydownFlag = true;
+
                     this.farRightCLocation = this.rotationCLocation;
 
                     this.tetrominoMirror[0][this.rotationCLocation].status = 1;
@@ -609,7 +622,8 @@ class Tetromino {
                 }
                 else {
                     this.rotationState++;
-                    this.rotateFlag = true;
+                    this.keydownFlag = true;
+
                     this.farRightCLocation = this.rotationCLocation + 1;
 
                     this.tetrominoMirror[0][this.rotationCLocation].status = 0;
