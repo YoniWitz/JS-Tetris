@@ -29,13 +29,10 @@ drawBorderLines = () => {
 }
 
 draw = (background) => {
-    if (typeof background.currentTetromino.lowestRLocation === 'undefined' || background.currentTetromino.lowestRLocation > BOXES_ROW_COUNT) {
+    if (typeof background.currentTetromino.lowestRLocation === 'undefined' || background.currentTetromino.lowestRLocation >= BOXES_ROW_COUNT - 1) {
         let tempTetromino;
         let rand;
         rand = Math.round(Math.random() * (NUMBER_OF_TETROMINOS - 1));
-        // if (DEBUG) {
-        //     background.rand = 1;
-        // }
 
         background.currentTetromino = background.getRandomTetromino(rand);
 
@@ -261,6 +258,7 @@ class Tetromino {
                     this.rotationState++;
                     this.keydownFlag = true;
 
+                    this.lowestRLocation -=2;
                     this.farLeftCLocation = this.rotationCLocation - 2;
                     this.farRightCLocation = this.rotationCLocation + 1;
 
@@ -279,7 +277,7 @@ class Tetromino {
             //switching from vertical to horizontal
 
             else {
-                //if iTetromino on bottom 2 rows row if tetromino on top row
+                //if iTetromino on bottom 2 rows row or if tetromino on top row
                 if (this.lowestRLocation >= BOXES_ROW_COUNT - 2 || this.lowestRLocation === 0) {
                     //do nothing
                 }
@@ -287,6 +285,7 @@ class Tetromino {
                     this.rotationState++;
                     this.keydownFlag = true;
 
+                    this.lowestRLocation +=2;
                     this.farLeftCLocation = this.farRightCLocation = this.rotationCLocation;
 
                     //erase horizontal
@@ -659,7 +658,7 @@ class Tetromino {
         this.tetrominoMatrix = tetrominoMatrix;
         this.rotationState = 0;
         this.tetrominoMirror = [];
-        this.lowestRLocation = 1;
+        this.lowestRLocation = this.letter === 'i'? 1:2;
         this.tetrominoLength = 10;
     }
 }
