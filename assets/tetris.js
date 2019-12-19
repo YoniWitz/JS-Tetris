@@ -33,19 +33,16 @@ draw = (background) => {
         let rand;
 
         //when tetromino hits bottom, tetromino is added to backgroundMatrix and magic happens
-        //TO-DO
         if (background.currentTetromino.lowestRLocation >= BOXES_ROW_COUNT - 1) {
             for (let r = background.currentTetromino.lowestRLocation - 3; r < background.backgroundMatrix.length; r++) {
-                for (let c = 0; c < background.currentTetromino.tetrominoLength; c++)
+                for (let c = 0; c < background.currentTetromino.tetrominoNumOfColumns; c++)
                     background.backgroundMatrix[r][c].status |= background.currentTetromino.tetrominoMatrix[r][c].status;
             }
         }
-        ctx.clearRect(PADDING * 2, PADDING * 2, GAME_WIDTH - PADDING * 3, CANVAS_HEIGHT - 3 * PADDING);
-        background.drawBoxes(background.backgroundMatrix, background.backgroundMatrix.length);
 
         rand = Math.round(Math.random() * (NUMBER_OF_TETROMINOS - 1));
         if (DEBUG) {
-            rand = 0;
+            rand = 2;
         }
         background.currentTetromino = background.getRandomTetromino(rand);
     }
@@ -59,9 +56,12 @@ draw = (background) => {
         else {
             background.currentTetromino.keydownFlag = false;
         }
-        background.addCoordinates(background.currentTetromino.tetrominoMatrix);
-        background.drawBoxes(background.currentTetromino.tetrominoMatrix, background.currentTetromino.lowestRLocation + 1);
+
     }
+    ctx.clearRect(PADDING * 2, PADDING * 2, GAME_WIDTH - PADDING * 3, CANVAS_HEIGHT - 3 * PADDING);
+    background.drawBoxes(background.backgroundMatrix, true);
+    background.addCoordinates(background.currentTetromino.tetrominoMatrix);
+    background.drawBoxes(background.currentTetromino.tetrominoMatrix, false);
     // requestAnimationFrame(draw);
 }
 
@@ -153,8 +153,8 @@ window.onload = () => {
             }
             this.addCoordinates(this.backgroundMatrix);
         },
-        drawBoxes: function (matrix, limit) {
-            for (let r = 0; r < limit; r++) {
+        drawBoxes: function (matrix, isBackground) {
+            for (let r = 0; r < matrix.length; r++) {
                 for (let c = 0; c < matrix[r].length; c++) {
                     if (matrix[r][c].status === 0) {
                         color = "gray"
@@ -163,14 +163,16 @@ window.onload = () => {
                         color = "black"
                     }
 
-                    ctx.beginPath();
-                    //outer box
-                    ctx.strokeRect(matrix[r][c].outerX, matrix[r][c].outerY, BOXES_BORDER_WIDTH, BOXES_BORDER_HEIGHT);
-                    //inner box
-                    ctx.rect(matrix[r][c].innerX, matrix[r][c].innerY, BOXES_INNER_BOX_WIDTH, BOXES_INNER_BOX_HEIGHT);
-                    ctx.fillStyle = color;
-                    ctx.fill();
-                    ctx.closePath();
+                    if (isBackground || color === "black") {
+                        ctx.beginPath();
+                        //outer box
+                        ctx.strokeRect(matrix[r][c].outerX, matrix[r][c].outerY, BOXES_BORDER_WIDTH, BOXES_BORDER_HEIGHT);
+                        //inner box
+                        ctx.rect(matrix[r][c].innerX, matrix[r][c].innerY, BOXES_INNER_BOX_WIDTH, BOXES_INNER_BOX_HEIGHT);
+                        ctx.fillStyle = color;
+                        ctx.fill();
+                        ctx.closePath();
+                    }
                 }
             }
         },
@@ -207,19 +209,19 @@ class Tetromino {
     tetrominoMatrix;
 
     lowestRLocation;
-
     farLeftCLocation;
     farRightCLocation;
     rotationCLocation;
+
     rotationState;
 
-    tetrominoLength;
+    tetrominoNumOfColumns;
 
     keydownFlag = false;
 
     moveRight() {
         //if tetromino not pressed against right wall
-        if (this.farRightCLocation < (this.tetrominoLength - 1)) {
+        if (this.farRightCLocation < (this.tetrominoNumOfColumns - 1)) {
             this.keydownFlag = true;
 
             this.farRightCLocation++; this.farLeftCLocation++; this.rotationCLocation++;
@@ -254,7 +256,7 @@ class Tetromino {
             //switching from vertical to horizontal
             if (this.rotationState === 1) {
                 //if iTetromino against left wall or one away from left wall or against right wall, cant rotate
-                if (this.farLeftCLocation < 2 || this.farRightCLocation === this.tetrominoLength - 1) {
+                if (this.farLeftCLocation < 2 || this.farRightCLocation === this.tetrominoNumOfColumns - 1) {
                 }
                 else {
                     this.rotationState++;
@@ -290,7 +292,7 @@ class Tetromino {
                     this.farLeftCLocation = this.farRightCLocation = this.rotationCLocation;
 
                     //erase horizontal
-                    for (let c = 0; c < this.tetrominoLength; c++) {
+                    for (let c = 0; c < this.tetrominoNumOfColumns; c++) {
                         this.tetrominoMatrix[this.lowestRLocation - 2][c].status = 0;
                     }
 
@@ -309,7 +311,7 @@ class Tetromino {
             //switching from vertical to horizontal
             if (this.rotationState === 1) {
                 //if sTetromino against right wall, cant rotate
-                if (this.farRightCLocation === this.tetrominoLength - 1) {
+                if (this.farRightCLocation === this.tetrominoNumOfColumns - 1) {
                 }
                 else {
                     this.rotationState++;
@@ -317,12 +319,12 @@ class Tetromino {
 
                     this.farRightCLocation = this.rotationCLocation + 1;
 
-                    this.tetrominoMirror[0][this.rotationCLocation - 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 2][this.rotationCLocation - 1].status = 0;
 
-                    this.tetrominoMirror[1][this.rotationCLocation - 1].status = 0;
-                    this.tetrominoMirror[1][this.rotationCLocation + 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation - 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation + 1].status = 1;
 
-                    this.tetrominoMirror[2][this.rotationCLocation - 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation - 1].status = 1;
                 }
             }
             //switching from horizontal to vertical
@@ -337,12 +339,12 @@ class Tetromino {
 
                     this.farRightCLocation = this.rotationCLocation;
 
-                    this.tetrominoMirror[0][this.rotationCLocation - 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation - 2][this.rotationCLocation - 1].status = 1;
 
-                    this.tetrominoMirror[1][this.rotationCLocation - 1].status = 1;
-                    this.tetrominoMirror[1][this.rotationCLocation + 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation - 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation + 1].status = 0;
 
-                    this.tetrominoMirror[2][this.rotationCLocation - 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation - 1].status = 0;
                 }
             }
         }
@@ -362,12 +364,12 @@ class Tetromino {
 
                     this.farLeftCLocation = this.rotationCLocation - 1;
 
-                    this.tetrominoMirror[0][this.rotationCLocation + 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 2][this.rotationCLocation + 1].status = 0;
 
-                    this.tetrominoMirror[1][this.rotationCLocation + 1].status = 0;
-                    this.tetrominoMirror[1][this.rotationCLocation - 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation + 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation - 1].status = 1;
 
-                    this.tetrominoMirror[2][this.rotationCLocation + 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation + 1].status = 1;
                 }
             }
             //switching from horizontal to vertical
@@ -382,12 +384,12 @@ class Tetromino {
 
                     this.farLeftCLocation = this.rotationCLocation;
 
-                    this.tetrominoMirror[0][this.rotationCLocation + 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation + 1].status = 1;
 
-                    this.tetrominoMirror[1][this.rotationCLocation - 1].status = 0;
-                    this.tetrominoMirror[1][this.rotationCLocation + 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation - 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation + 1].status = 1;
 
-                    this.tetrominoMirror[2][this.rotationCLocation + 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation + 1].status = 0;
                 }
             }
         }
@@ -407,15 +409,15 @@ class Tetromino {
 
                     this.farRightCLocation = this.rotationCLocation;
 
-                    this.tetrominoMirror[0][this.rotationCLocation].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation - 2][this.rotationCLocation].status = 1;
 
-                    this.tetrominoMirror[1][this.rotationCLocation + 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation + 1].status = 0;
                 }
             }
             //switching from vertical to horizontal
             else if (this.rotationState === 3) {
                 //if zTetromino against right wall, can't rotate
-                if (this.farRightCLocation === this.tetrominoLength - 1) {
+                if (this.farRightCLocation === this.tetrominoNumOfColumns - 1) {
                     //do nothing
                 }
                 else {
@@ -424,12 +426,12 @@ class Tetromino {
 
                     this.farRightCLocation = this.rotationCLocation + 1;
 
-                    this.tetrominoMirror[0][this.rotationCLocation].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 2][this.rotationCLocation].status = 0;
 
-                    this.tetrominoMirror[1][this.rotationCLocation - 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation - 1].status = 0;
 
-                    this.tetrominoMirror[2][this.rotationCLocation - 1].status = 1;
-                    this.tetrominoMirror[2][this.rotationCLocation + 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation - 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation + 1].status = 1;
                 }
             }
             //switching from vertical to horizontal
@@ -444,12 +446,12 @@ class Tetromino {
 
                     this.farLeftCLocation = this.rotationCLocation;
 
-                    this.tetrominoMirror[0][this.rotationCLocation].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation - 2][this.rotationCLocation].status = 1;
 
-                    this.tetrominoMirror[1][this.rotationCLocation + 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation + 1].status = 1;
 
-                    this.tetrominoMirror[2][this.rotationCLocation + 1].status = 0;
-                    this.tetrominoMirror[2][this.rotationCLocation - 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation + 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation - 1].status = 0;
                 }
             }
             else if (this.rotationState === 1) {
@@ -463,9 +465,9 @@ class Tetromino {
 
                     this.farLeftCLocation = this.rotationCLocation - 1;
 
-                    this.tetrominoMirror[0][this.rotationCLocation].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 2][this.rotationCLocation].status = 0;
 
-                    this.tetrominoMirror[1][this.rotationCLocation - 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation - 1].status = 1;
                 }
             }
         }
@@ -485,12 +487,12 @@ class Tetromino {
 
                     this.farLeftCLocation = this.rotationCLocation;
 
-                    this.tetrominoMirror[0][this.rotationCLocation].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation - 2][this.rotationCLocation].status = 1;
 
-                    this.tetrominoMirror[1][this.rotationCLocation].status = 1;
-                    this.tetrominoMirror[1][this.rotationCLocation + 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation + 1].status = 0;
 
-                    this.tetrominoMirror[2][this.rotationCLocation - 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation - 1].status = 0;
                 }
             }
             //switching from vertical to horizontal
@@ -505,14 +507,14 @@ class Tetromino {
 
                     this.farLeftCLocation = this.rotationCLocation - 1;
 
-                    this.tetrominoMirror[0][this.rotationCLocation].status = 0;
-                    this.tetrominoMirror[0][this.rotationCLocation + 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 2][this.rotationCLocation].status = 0;
 
-                    this.tetrominoMirror[1][this.rotationCLocation - 1].status = 1;
-                    this.tetrominoMirror[1][this.rotationCLocation + 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation - 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation + 1].status = 1;
 
-                    this.tetrominoMirror[2][this.rotationCLocation + 1].status = 1;
-                    this.tetrominoMirror[2][this.rotationCLocation].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation + 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation - 1].status = 1;
                 }
             }
             //switching from horizontal to vertical
@@ -527,19 +529,19 @@ class Tetromino {
 
                     this.farRightCLocation = this.rotationCLocation;
 
-                    this.tetrominoMirror[0][this.rotationCLocation].status = 1;
-                    this.tetrominoMirror[0][this.rotationCLocation - 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation  -2][this.rotationCLocation].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation - 2][this.rotationCLocation - 1].status = 1;
 
-                    this.tetrominoMirror[1][this.rotationCLocation + 1].status = 0;
-                    this.tetrominoMirror[1][this.rotationCLocation - 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation + 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation - 1].status = 0;
 
-                    this.tetrominoMirror[2][this.rotationCLocation].status = 1;
-                    this.tetrominoMirror[2][this.rotationCLocation - 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation - 1].status = 0;
                 }
             }
             else if (this.rotationState === 3) {
                 //if lTetromino against right wall, can't rotate
-                if (this.farRightCLocation === this.tetrominoLength - 1) {
+                if (this.farRightCLocation === this.tetrominoNumOfColumns - 1) {
                     //do nothing
                 }
                 else {
@@ -548,14 +550,14 @@ class Tetromino {
 
                     this.farRightCLocation = this.rotationCLocation + 1;
 
-                    this.tetrominoMirror[0][this.rotationCLocation].status = 0;
-                    this.tetrominoMirror[0][this.rotationCLocation - 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 2][this.rotationCLocation].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation -2][this.rotationCLocation - 1].status = 0;
 
-                    this.tetrominoMirror[1][this.rotationCLocation + 1].status = 1;
-                    this.tetrominoMirror[1][this.rotationCLocation].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation + 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation].status = 0;
 
-                    this.tetrominoMirror[2][this.rotationCLocation - 1].status = 1;
-                    this.tetrominoMirror[2][this.rotationCLocation + 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation - 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation + 1].status = 1;
                 }
             }
         }
@@ -575,14 +577,14 @@ class Tetromino {
 
                     this.farLeftCLocation = this.rotationCLocation;
 
-                    this.tetrominoMirror[0][this.rotationCLocation].status = 1;
-                    this.tetrominoMirror[0][this.rotationCLocation + 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation-2][this.rotationCLocation].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation -2][this.rotationCLocation + 1].status = 1;
 
-                    this.tetrominoMirror[1][this.rotationCLocation].status = 1;
-                    this.tetrominoMirror[1][this.rotationCLocation - 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation - 1].status = 0;
 
-                    this.tetrominoMirror[2][this.rotationCLocation - 1].status = 0;
-                    this.tetrominoMirror[2][this.rotationCLocation + 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation - 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation + 1].status = 0;
                 }
             }
             //switching from vertical to horizontal
@@ -597,14 +599,14 @@ class Tetromino {
 
                     this.farLeftCLocation = this.rotationCLocation - 1;
 
-                    this.tetrominoMirror[0][this.rotationCLocation + 1].status = 0;
-                    this.tetrominoMirror[0][this.rotationCLocation].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation -2][this.rotationCLocation + 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 2][this.rotationCLocation].status = 0;
 
-                    this.tetrominoMirror[1][this.rotationCLocation - 1].status = 1;
-                    this.tetrominoMirror[1][this.rotationCLocation + 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation - 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation + 1].status = 1;
 
-                    this.tetrominoMirror[2][this.rotationCLocation + 1].status = 1;
-                    this.tetrominoMirror[2][this.rotationCLocation].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation + 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation].status = 0;
                 }
             }
             //switching from horizontal to vertical
@@ -619,19 +621,19 @@ class Tetromino {
 
                     this.farRightCLocation = this.rotationCLocation;
 
-                    this.tetrominoMirror[0][this.rotationCLocation].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation - 2][this.rotationCLocation].status = 1;
 
-                    this.tetrominoMirror[1][this.rotationCLocation + 1].status = 0;
-                    this.tetrominoMirror[1][this.rotationCLocation - 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation + 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation - 1].status = 0;
 
-                    this.tetrominoMirror[2][this.rotationCLocation + 1].status = 0;
-                    this.tetrominoMirror[2][this.rotationCLocation].status = 1;
-                    this.tetrominoMirror[2][this.rotationCLocation - 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation + 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation - 1].status = 1;
                 }
             }
             else if (this.rotationState === 3) {
                 //if jTetromino against right wall, can't rotate
-                if (this.farRightCLocation === this.tetrominoLength - 1) {
+                if (this.farRightCLocation === this.tetrominoNumOfColumns - 1) {
                     //do nothing
                 }
                 else {
@@ -640,12 +642,12 @@ class Tetromino {
 
                     this.farRightCLocation = this.rotationCLocation + 1;
 
-                    this.tetrominoMirror[0][this.rotationCLocation].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 2][this.rotationCLocation].status = 0;
 
-                    this.tetrominoMirror[1][this.rotationCLocation - 1].status = 1;
-                    this.tetrominoMirror[1][this.rotationCLocation].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation - 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation].status = 0;
 
-                    this.tetrominoMirror[2][this.rotationCLocation + 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation + 1].status = 1;
                 }
             }
         }
@@ -659,6 +661,6 @@ class Tetromino {
         this.tetrominoMatrix = tetrominoMatrix;
         this.rotationState = 0;
         this.lowestRLocation = this.letter === 'i' ? 1 : 2;
-        this.tetrominoLength = 10;
+        this.tetrominoNumOfColumns = tetrominoMatrix[0].length;
     }
 }
