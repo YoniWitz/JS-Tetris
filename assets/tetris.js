@@ -41,7 +41,7 @@ draw = (background) => {
             }
         }
         ctx.clearRect(PADDING * 2, PADDING * 2, GAME_WIDTH - PADDING * 3, CANVAS_HEIGHT - 3 * PADDING);
-        background.drawBoxes(background.backgroundMatrix);
+        background.drawBoxes(background.backgroundMatrix, background.backgroundMatrix.length);
 
         rand = Math.round(Math.random() * (NUMBER_OF_TETROMINOS - 1));
         if (DEBUG) {
@@ -54,18 +54,14 @@ draw = (background) => {
         if (!background.currentTetromino.keydownFlag) {
             //add new row to 
             background.currentTetromino.tetrominoMatrix.unshift(JSON.parse(JSON.stringify(background.newRow)));
-
             background.currentTetromino.lowestRLocation++;
-
         }
         else {
             background.currentTetromino.keydownFlag = false;
         }
         background.addCoordinates(background.currentTetromino.tetrominoMatrix);
-        background.drawBoxes(background.currentTetromino.tetrominoMatrix);
+        background.drawBoxes(background.currentTetromino.tetrominoMatrix, background.currentTetromino.lowestRLocation + 1);
     }
-
-
     // requestAnimationFrame(draw);
 }
 
@@ -84,11 +80,9 @@ keyDownHandler = (event, currentTetromino) => {
             break;
         case "ArrowUp":
             currentTetromino.rotate();
-
             break;
         //down arrow
         case 40:
-
             break;
     }
 };
@@ -159,8 +153,8 @@ window.onload = () => {
             }
             this.addCoordinates(this.backgroundMatrix);
         },
-        drawBoxes: function (matrix) {
-            for (let r = 0; r < matrix.length; r++) {
+        drawBoxes: function (matrix, limit) {
+            for (let r = 0; r < limit; r++) {
                 for (let c = 0; c < matrix[r].length; c++) {
                     if (matrix[r][c].status === 0) {
                         color = "gray"
