@@ -41,9 +41,9 @@ draw = (background) => {
         }
 
         rand = Math.round(Math.random() * (NUMBER_OF_TETROMINOS - 1));
-        if (DEBUG) {
-            rand = 2;
-        }
+        // if (DEBUG) {
+        //     rand = 2;
+        // }
         background.currentTetromino = background.getRandomTetromino(rand);
     }
     else {
