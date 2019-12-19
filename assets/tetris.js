@@ -529,7 +529,7 @@ class Tetromino {
 
                     this.farRightCLocation = this.rotationCLocation;
 
-                    this.tetrominoMatrix[this.lowestRLocation  -2][this.rotationCLocation].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation - 2][this.rotationCLocation].status = 1;
                     this.tetrominoMatrix[this.lowestRLocation - 2][this.rotationCLocation - 1].status = 1;
 
                     this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation + 1].status = 0;
@@ -551,7 +551,7 @@ class Tetromino {
                     this.farRightCLocation = this.rotationCLocation + 1;
 
                     this.tetrominoMatrix[this.lowestRLocation - 2][this.rotationCLocation].status = 0;
-                    this.tetrominoMatrix[this.lowestRLocation -2][this.rotationCLocation - 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 2][this.rotationCLocation - 1].status = 0;
 
                     this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation + 1].status = 1;
                     this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation].status = 0;
@@ -577,8 +577,8 @@ class Tetromino {
 
                     this.farLeftCLocation = this.rotationCLocation;
 
-                    this.tetrominoMatrix[this.lowestRLocation-2][this.rotationCLocation].status = 1;
-                    this.tetrominoMatrix[this.lowestRLocation -2][this.rotationCLocation + 1].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation - 2][this.rotationCLocation].status = 1;
+                    this.tetrominoMatrix[this.lowestRLocation - 2][this.rotationCLocation + 1].status = 1;
 
                     this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation].status = 1;
                     this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation - 1].status = 0;
@@ -599,7 +599,7 @@ class Tetromino {
 
                     this.farLeftCLocation = this.rotationCLocation - 1;
 
-                    this.tetrominoMatrix[this.lowestRLocation -2][this.rotationCLocation + 1].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 2][this.rotationCLocation + 1].status = 0;
                     this.tetrominoMatrix[this.lowestRLocation - 2][this.rotationCLocation].status = 0;
 
                     this.tetrominoMatrix[this.lowestRLocation - 1][this.rotationCLocation - 1].status = 1;
