@@ -1,4 +1,3 @@
-import * as Tetromino from './Tetromino.js'
 let canvas = document.getElementById("myCanvas");
 let ctx = canvas.getContext("2d");
 const CANVAS_WIDTH = document.getElementById('myCanvas').width;
@@ -17,10 +16,8 @@ const BOXES_INNER_BOX_WIDTH = BOXES_SIZE - INNER_TO_OUTER_RATIO * 2 * BOXES_PADD
 const BOXES_INNER_BOX_HEIGHT = BOXES_INNER_BOX_WIDTH;
 const PADDING = 5;
 
-
-
-
 export default class GameUtil {
+    static endOfGame = false;
     static moveRight(currentTetromino, staticMatrix) {
         //if tetromino  pressed against right wall
         if (currentTetromino.farRightCLocation >= (currentTetromino.tetrominoNumOfColumns - 1)) {
@@ -43,7 +40,7 @@ export default class GameUtil {
     }
 
     static moveLeft(currentTetromino, staticMatrix) {
-        //if tetromino  pressed against right wall
+        //if tetromino  pressed against left wall
         if (currentTetromino.farLeftCLocation <= 0) {
             return;
         }
@@ -63,6 +60,13 @@ export default class GameUtil {
         currentTetromino.moveLeft();
     }
 
+    static detectEndOfGame(currentTetromino, staticMatrix){
+        for (let c = currentTetromino.farLeftCLocation; c <= currentTetromino.farRightCLocation; c++) {
+            if (staticMatrix[3][c].status === 1 && currentTetromino.tetrominoMatrix[2][c].status === 1) {
+               this.endOfGame = true;
+            }
+        }
+    }
     static detectBottomCollision(currentTetromino, staticMatrix) {
         //if tetromino not on bottom row
         if (currentTetromino.lowestRLocation < BOXES_ROW_COUNT - 1) {
@@ -124,10 +128,10 @@ export default class GameUtil {
         for (let r = 0; r < matrix.length; r++) {
             for (let c = 0; c < matrix[r].length; c++) {
                 let outerBoxX = PADDING * 2 + BOXES_PADDING * (1 + 2 * c) + (c * BOXES_BORDER_WIDTH);
-                let outerBoxY = PADDING * 2 + BOXES_PADDING * (1 + 2 * r) + (r * BOXES_BORDER_HEIGHT);
+                let outerBoxY = BOXES_PADDING * (1 + 2 * r) + (r * BOXES_BORDER_HEIGHT);
 
                 let innerBoxX = PADDING * 2 + INNER_TO_OUTER_RATIO * BOXES_PADDING * (1 + 2 * c) + (c * BOXES_INNER_BOX_WIDTH);
-                let innerBoxY = PADDING * 2 + INNER_TO_OUTER_RATIO * BOXES_PADDING * (1 + 2 * r) + (r * BOXES_INNER_BOX_HEIGHT);
+                let innerBoxY = INNER_TO_OUTER_RATIO * BOXES_PADDING * (1 + 2 * r) + (r * BOXES_INNER_BOX_HEIGHT);
 
                 matrix[r][c].outerX = outerBoxX;
                 matrix[r][c].outerY = outerBoxY;

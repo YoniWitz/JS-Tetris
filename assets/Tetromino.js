@@ -42,6 +42,7 @@ class Tetromino {
     constructor(onesMatrix) {
         this.tetrominoMatrix = this.createTetrominoMatrix(onesMatrix);
         this.tetrominoNumOfColumns = this.tetrominoMatrix[0].length;
+        this.lowestRLocation = 2;
     }
 }
 
@@ -60,20 +61,19 @@ export class ITetromino extends Tetromino {
                 this.rotationState++;
                 this.keydownFlag = true;
 
-                this.lowestRLocation -= 2;
+                this.lowestRLocation--;
                 this.farLeftCLocation = this.rotationCLocation - 2;
                 this.farRightCLocation = this.rotationCLocation + 1;
 
                 //erase vertical
-                for (let r = this.lowestRLocation - 1; r < this.tetrominoMatrix.length; r++) {
+                for (let r = this.lowestRLocation - 2; r < this.tetrominoMatrix.length; r++) {
                     this.tetrominoMatrix[r][this.rotationCLocation].status = 0;
                 }
 
                 //create horizontal
-                this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation - 1].status = 1;
-                this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation].status = 1;
-                this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation - 2].status = 1;
-                this.tetrominoMatrix[this.lowestRLocation][this.rotationCLocation + 1].status = 1;
+                for (let c = this.farLeftCLocation; c <= this.farRightCLocation; c++) {
+                    this.tetrominoMatrix[this.lowestRLocation][c].status = 1;
+                }
             }
         }
         //switching from horizontal to vertical
@@ -86,12 +86,12 @@ export class ITetromino extends Tetromino {
                 this.rotationState++;
                 this.keydownFlag = true;
 
-                this.lowestRLocation += 2;
+                this.lowestRLocation++;
                 this.farLeftCLocation = this.farRightCLocation = this.rotationCLocation;
 
                 //erase horizontal
                 for (let c = 0; c < this.tetrominoNumOfColumns; c++) {
-                    this.tetrominoMatrix[this.lowestRLocation - 2][c].status = 0;
+                    this.tetrominoMatrix[this.lowestRLocation - 1][c].status = 0;
                 }
 
                 //create vertical
@@ -103,11 +103,10 @@ export class ITetromino extends Tetromino {
     }
 
     constructor() {
-        super([{ r: 1, c: 3 }, { r: 1, c: 4 }, { r: 1, c: 5 }, { r: 1, c: 6 }]);
+        super([{ r: 2, c: 3 }, { r: 2, c: 4 }, { r: 2, c: 5 }, { r: 2, c: 6 }]);
         this.farLeftCLocation = 3;
         this.farRightCLocation = 6;
-        this.rotationCLocation = 5;
-        this.lowestRLocation = 1;
+        this.rotationCLocation = 5;        
     }
 }
 
@@ -207,8 +206,7 @@ export class JTetromino extends Tetromino {
         super([{ r: 1, c: 3 }, { r: 2, c: 3 }, { r: 2, c: 4 }, { r: 2, c: 5 }]);
         this.farLeftCLocation = 3;
         this.farRightCLocation = 5;
-        this.rotationCLocation = 4;
-        this.lowestRLocation = 2;
+        this.rotationCLocation = 4;       
     }
 }
 
@@ -309,7 +307,6 @@ export class LTetromino extends Tetromino {
         this.farLeftCLocation = 3;
         this.farRightCLocation = 5;
         this.rotationCLocation = 4;
-        this.lowestRLocation = 2;
     }
 }
 
@@ -319,7 +316,6 @@ export class OTetromino extends Tetromino {
         this.farLeftCLocation = 4;
         this.farRightCLocation = 5;
         this.rotationCLocation = 5;
-        this.lowestRLocation = 2;
     }
 }
 
@@ -375,7 +371,7 @@ export class STetromino extends Tetromino {
         this.farLeftCLocation = 3;
         this.farRightCLocation = 5;
         this.rotationCLocation = 4;
-        this.lowestRLocation = 2;
+        
     }
 }
 
@@ -463,7 +459,6 @@ export class TTetromino extends Tetromino {
         this.farLeftCLocation = 3;
         this.farRightCLocation = 5;
         this.rotationCLocation = 4;
-        this.lowestRLocation = 2;
     }
 }
 
@@ -518,6 +513,5 @@ export class ZTetromino extends Tetromino {
         this.farLeftCLocation = 3;
         this.farRightCLocation = 5;
         this.rotationCLocation = 4;
-        this.lowestRLocation = 2;
     }
 }
