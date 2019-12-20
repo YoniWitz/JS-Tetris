@@ -15,7 +15,7 @@ const BOXES_ROW_COUNT = BOXES_COLUMN_COUNT * 2;
 // const BOXES_SIZE = GAME_WIDTH / BOXES_COLUMN_COUNT;
 
 const NUMBER_OF_TETROMINOS = 7;
-const ONE_SECOND = 1000;
+const ONE_SECOND = 500;
 
 let play = (dynamicGame, staticGame) => {
     //if tetromino hit the bottom
@@ -98,10 +98,35 @@ window.onload = () => {
             GameUtil.addCoordinates(this.staticMatrix);
         },
 
+        newRow: function () {
+            let newRow = [];
+            for (let c = 0; c < BOXES_COLUMN_COUNT; c++) {
+                newRow[c] = { status: 0 };
+            }
+            return newRow;
+        },
+
         addTetrominoToStaticMatrix(tetromino) {
             for (let r = tetromino.lowestRLocation - 3; r < this.staticMatrix.length; r++) {
-                for (let c = 0; c < tetromino.tetrominoNumOfColumns; c++)
+                let count = 0;
+                for (let c = 0; c < tetromino.tetrominoNumOfColumns; c++){
                     this.staticMatrix[r][c].status |= tetromino.tetrominoMatrix[r][c].status;
+                    if(this.staticMatrix[r][c].status === 1)
+                        count++;
+                }
+                //if row is full
+                if(count >= 10){
+                    this.staticMatrix.splice(r, 1);
+                    this.addNewRowToStaticMatrix();
+                    GameUtil.addCoordinates(this.staticMatrix);
+                    ctx.clearRect(PADDING * 2, PADDING * 2, GAME_WIDTH - PADDING * 3, CANVAS_HEIGHT - 3 * PADDING);
+                    GameUtil.drawBoxes(staticGame.staticMatrix, true);
+                }
+            }
+        },
+        addNewRowToStaticMatrix: function () {
+            if (this.staticMatrix) {
+                this.staticMatrix.unshift(this.newRow())
             }
         }
     };
