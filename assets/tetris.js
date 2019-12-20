@@ -18,9 +18,9 @@ const NUMBER_OF_TETROMINOS = 7;
 const ONE_SECOND = 500;
 
 let play = (dynamicGame, staticGame) => {
+    let tetrominosCollision = GameUtil.detectBottomCollision(dynamicGame.currentTetromino, staticGame.staticMatrix);
     //if tetromino hit the bottom
-    if (dynamicGame.currentTetromino.lowestRLocation >= BOXES_ROW_COUNT - 1) {
-        //when tetromino hits bottom, tetromino is added to backgroundMatrix and magic happens    
+    if (dynamicGame.currentTetromino.lowestRLocation >= BOXES_ROW_COUNT - 1 || tetrominosCollision) {   
         staticGame.addTetrominoToStaticMatrix(dynamicGame.currentTetromino);
         dynamicGame.setRandomTetromino();
     }
@@ -107,7 +107,7 @@ window.onload = () => {
         },
 
         addTetrominoToStaticMatrix(tetromino) {
-            for (let r = tetromino.lowestRLocation - 3; r < this.staticMatrix.length; r++) {
+            for (let r = tetromino.lowestRLocation - 3; r <= tetromino.lowestRLocation; r++) {
                 let count = 0;
                 for (let c = 0; c < tetromino.tetrominoNumOfColumns; c++){
                     this.staticMatrix[r][c].status |= tetromino.tetrominoMatrix[r][c].status;

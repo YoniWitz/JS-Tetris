@@ -6,6 +6,8 @@ const GAME_WIDTH = CANVAS_WIDTH * .75;
 
 //Boxes
 const BOXES_COLUMN_COUNT = 10;
+
+const BOXES_ROW_COUNT = BOXES_COLUMN_COUNT * 2;
 const BOXES_SIZE = GAME_WIDTH / BOXES_COLUMN_COUNT;
 const BOXES_PADDING = 2;
 const BOXES_BORDER_WIDTH = BOXES_SIZE - 2 * BOXES_PADDING;
@@ -14,6 +16,8 @@ const INNER_TO_OUTER_RATIO = 3.5;
 const BOXES_INNER_BOX_WIDTH = BOXES_SIZE - INNER_TO_OUTER_RATIO * 2 * BOXES_PADDING;
 const BOXES_INNER_BOX_HEIGHT = BOXES_INNER_BOX_WIDTH;
 const PADDING = 5;
+
+
 
 
 export default class GameUtil {
@@ -40,7 +44,7 @@ export default class GameUtil {
 
     static moveLeft(currentTetromino, staticMatrix) {
         //if tetromino  pressed against right wall
-        if (currentTetromino.farLeftCLocation<= 0) {
+        if (currentTetromino.farLeftCLocation <= 0) {
             return;
         }
         //tetromino exists where user wants to move
@@ -59,6 +63,19 @@ export default class GameUtil {
         currentTetromino.moveLeft();
     }
 
+    static detectBottomCollision(currentTetromino, staticMatrix) {
+        //if tetromino not on bottom row
+        if (currentTetromino.lowestRLocation < BOXES_ROW_COUNT - 1) {
+            //check bottom 3 rows of tetromino if collides with static matrix
+            for (let r = currentTetromino.lowestRLocation - 2; r <= currentTetromino.lowestRLocation; r++) {
+                for (let c = currentTetromino.farLeftCLocation; c <= currentTetromino.farRightCLocation; c++) {
+                    if (currentTetromino.tetrominoMatrix[r][c].status === 1 && staticMatrix[r + 1][c].status === 1)
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
     //key listener function
     static keyDownHandler = (event, currentTetromino, staticMatrix) => {
         var key = event.key;
