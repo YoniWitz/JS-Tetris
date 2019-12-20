@@ -5,29 +5,23 @@ class Tetromino {
     keydownFlag = false;
 
     moveRight() {
-        //if tetromino not pressed against right wall
-        if (this.farRightCLocation < (this.tetrominoNumOfColumns - 1)) {
-            this.keydownFlag = true;
+        this.keydownFlag = true;
 
-            this.farRightCLocation++; this.farLeftCLocation++; this.rotationCLocation++;
+        this.farRightCLocation++; this.farLeftCLocation++; this.rotationCLocation++;
 
-            this.tetrominoMatrix.forEach(item => {
-                item.unshift(item.pop());
-            })
-        }
+        this.tetrominoMatrix.forEach(item => {
+            item.unshift(item.pop());
+        })
     }
 
     moveLeft() {
-        //if tetromino not pressed against left wall
-        if (this.farLeftCLocation > 0) {
-            this.keydownFlag = true;
+        this.keydownFlag = true;
 
-            this.farRightCLocation--; this.farLeftCLocation--; this.rotationCLocation--;
+        this.farRightCLocation--; this.farLeftCLocation--; this.rotationCLocation--;
 
-            this.tetrominoMatrix.forEach(item => {
-                item.push(item.shift());
-            })
-        }
+        this.tetrominoMatrix.forEach(item => {
+            item.push(item.shift());
+        })
     }
 
     createTetrominoMatrix(onesMatrix) {
@@ -47,7 +41,7 @@ class Tetromino {
 
     constructor(onesMatrix) {
         this.tetrominoMatrix = this.createTetrominoMatrix(onesMatrix);
-        this.tetrominoNumOfColumns = this.tetrominoMatrix[0].length;   
+        this.tetrominoNumOfColumns = this.tetrominoMatrix[0].length;
     }
 }
 
@@ -210,7 +204,7 @@ export class JTetromino extends Tetromino {
     }
 
     constructor() {
-        super( [{ r: 1, c: 3 }, { r: 2, c: 3 }, { r: 2, c: 4 }, { r: 2, c: 5 }]);
+        super([{ r: 1, c: 3 }, { r: 2, c: 3 }, { r: 2, c: 4 }, { r: 2, c: 5 }]);
         this.farLeftCLocation = 3;
         this.farRightCLocation = 5;
         this.rotationCLocation = 4;

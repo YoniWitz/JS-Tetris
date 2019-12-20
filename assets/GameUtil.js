@@ -1,3 +1,4 @@
+import * as Tetromino from './Tetromino.js'
 let canvas = document.getElementById("myCanvas");
 let ctx = canvas.getContext("2d");
 const CANVAS_WIDTH = document.getElementById('myCanvas').width;
@@ -16,6 +17,68 @@ const PADDING = 5;
 
 
 export default class GameUtil {
+    static moveRight(currentTetromino, staticMatrix) {
+        //if tetromino  pressed against right wall
+        if (currentTetromino.farRightCLocation >= (currentTetromino.tetrominoNumOfColumns - 1)) {
+            return;
+        }
+        //tetromino exists where user wants to move
+        if (
+            (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation][currentTetromino.farRightCLocation].status === 1
+                && staticMatrix[currentTetromino.lowestRLocation][currentTetromino.farRightCLocation + 1].status === 1)
+            ||
+            (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation - 1][currentTetromino.farRightCLocation].status === 1
+                && staticMatrix[currentTetromino.lowestRLocation - 1][currentTetromino.farRightCLocation + 1].status === 1)
+            ||
+            (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation - 2][currentTetromino.farRightCLocation].status === 1
+                && staticMatrix[currentTetromino.lowestRLocation - 2][currentTetromino.farRightCLocation + 1].status === 1)
+        ) {
+            return;
+        }
+        currentTetromino.moveRight();
+    }
+
+    static moveLeft(currentTetromino, staticMatrix) {
+        //if tetromino  pressed against right wall
+        if (currentTetromino.farLeftCLocation<= 0) {
+            return;
+        }
+        //tetromino exists where user wants to move
+        if (
+            (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation][currentTetromino.farLeftCLocation].status === 1
+                && staticMatrix[currentTetromino.lowestRLocation][currentTetromino.farLeftCLocation - 1].status === 1)
+            ||
+            (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation - 1][currentTetromino.farLeftCLocation].status === 1
+                && staticMatrix[currentTetromino.lowestRLocation - 1][currentTetromino.farLeftCLocation - 1].status === 1)
+            ||
+            (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation - 2][currentTetromino.farLeftCLocation].status === 1
+                && staticMatrix[currentTetromino.lowestRLocation - 2][currentTetromino.farLeftCLocation - 1].status === 1)
+        ) {
+            return;
+        }
+        currentTetromino.moveLeft();
+    }
+
+    //key listener function
+    static keyDownHandler = (event, currentTetromino, staticMatrix) => {
+        var key = event.key;
+        switch (key) {
+            case 32:
+                break;
+            case "ArrowRight":
+                this.moveRight(currentTetromino, staticMatrix);
+                break;
+            case "ArrowLeft":
+                this.moveLeft(currentTetromino, staticMatrix);
+                break;
+            case "ArrowUp":
+                currentTetromino.rotate();
+                break;
+            //down arrow
+            case 40:
+                break;
+        }
+    }
     static drawBoxes = (matrix, isBackground) => {
         let color;
         for (let r = 0; r < matrix.length; r++) {
