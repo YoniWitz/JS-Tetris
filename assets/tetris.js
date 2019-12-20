@@ -51,7 +51,8 @@ let play = (dynamicGame, staticGame) => {
 
         }
     }
-    ctx.clearRect(PADDING * 2, 0, GAME_WIDTH - PADDING * 3, CANVAS_HEIGHT - 3 * PADDING);
+    ctx.clearRect(PADDING * 2, 0, CANVAS_WIDTH, CANVAS_HEIGHT - 3 * PADDING);
+    GameUtil.drawScore();
     GameUtil.drawBoxes(staticGame.staticMatrix, true);
     GameUtil.addCoordinates(dynamicGame.currentTetromino.tetrominoMatrix);
     GameUtil.drawBoxes(dynamicGame.currentTetromino.tetrominoMatrix, false);
@@ -134,6 +135,7 @@ window.onload = () => {
                 }
                 //if row is full
                 if (count >= 10) {
+                    GameUtil.score += 100;
                     this.staticMatrix.splice(r, 1);
                     this.addNewRowToStaticMatrix();
                     GameUtil.addCoordinates(this.staticMatrix);

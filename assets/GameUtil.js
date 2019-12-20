@@ -18,6 +18,13 @@ const PADDING = 5;
 
 export default class GameUtil {
     static endOfGame = false;
+    static score = 0;
+
+    static drawScore() {
+        ctx.font = "15px Arial";
+        ctx.fillStyle = "#0095DD";
+        ctx.fillText("Score: " + this.score, canvas.width - 85  , 20);
+    }
     static moveRight(currentTetromino, staticMatrix) {
         //if tetromino  pressed against right wall
         if (currentTetromino.farRightCLocation >= (currentTetromino.tetrominoNumOfColumns - 1)) {
