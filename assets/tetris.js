@@ -17,7 +17,7 @@ const BOXES_ROW_COUNT = BOXES_COLUMN_COUNT * 2;
 const NUMBER_OF_TETROMINOS = 7;
 const ONE_SECOND = 1000;
 
-let draw = (dynamicGame, staticGame) => {
+let play = (dynamicGame, staticGame) => {
     //if tetromino hit the bottom
     if (dynamicGame.currentTetromino.lowestRLocation >= BOXES_ROW_COUNT - 1) {
         //when tetromino hits bottom, tetromino is added to backgroundMatrix and magic happens    
@@ -43,27 +43,6 @@ let draw = (dynamicGame, staticGame) => {
     // requestAnimationFrame(draw);
 }
 
-//key listener function
-let keyDownHandler = (event, currentTetromino) => {
-    var key = event.key;
-    switch (key) {
-        case 32:
-            break;
-        case "ArrowRight":
-            currentTetromino.moveRight();
-            break;
-        case "ArrowLeft":
-            currentTetromino.moveLeft();
-            break;
-        case "ArrowUp":
-            currentTetromino.rotate();
-            break;
-        //down arrow
-        case 40:
-            break;
-    }
-};
-
 //drawBorderLines();
 window.onload = () => {
     let dynamicGame = {
@@ -79,9 +58,9 @@ window.onload = () => {
 
         setRandomTetromino: function () {
             let random = Math.round(Math.random() * (NUMBER_OF_TETROMINOS - 1));
-            if(DEBUG){
-                random = 6;
-            }
+            // if(DEBUG){
+            //     random = 6;
+            // }
 
             if (random === 0)
                 this.currentTetromino = new Tetromino.ITetromino();
@@ -131,8 +110,8 @@ window.onload = () => {
     dynamicGame.setRandomTetromino();
 
     //key listener
-    document.addEventListener("keydown", function (event) { keyDownHandler(event, dynamicGame.currentTetromino); }, false);
+    document.addEventListener("keydown", function (event) { GameUtil.keyDownHandler(event, dynamicGame.currentTetromino, staticGame.staticMatrix); }, false);
 
-    setInterval(function () { draw(dynamicGame, staticGame); }, ONE_SECOND);
+    setInterval(function () { play(dynamicGame, staticGame); }, ONE_SECOND);
 }
 
