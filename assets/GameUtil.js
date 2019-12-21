@@ -88,22 +88,32 @@ export default class GameUtil {
         return false;
     }
     //key listener function
-    static keyDownHandler = (event, currentTetromino, staticMatrix) => {
+    static keyDownHandler = (event, dynamicGame, staticMatrix) => {
         var key = event.key;
         switch (key) {
-            case 32:
+            //spacebar           
+            case "Spacebar":
+            case " ":
+               
                 break;
             case "ArrowRight":
-                this.moveRight(currentTetromino, staticMatrix);
+                this.moveRight(dynamicGame.currentTetromino, staticMatrix);
                 break;
             case "ArrowLeft":
-                this.moveLeft(currentTetromino, staticMatrix);
+                this.moveLeft(dynamicGame.currentTetromino, staticMatrix);
                 break;
             case "ArrowUp":
-                currentTetromino.rotate();
+                dynamicGame.currentTetromino.rotate();
                 break;
             //down arrow
-            case 40:
+            case "ArrowDown":
+                let tetrominosCollision = this.detectBottomCollision(dynamicGame.currentTetromino, staticMatrix);
+                //if no tetromino underneath
+                if (!tetrominosCollision) {
+                    //add new row to top of tetromino
+                    dynamicGame.addNewRowToCurrentTetromino();
+                    dynamicGame.currentTetromino.lowestRLocation++;
+                }
                 break;
         }
     }

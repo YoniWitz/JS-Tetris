@@ -15,7 +15,7 @@ const BOXES_ROW_COUNT = BOXES_COLUMN_COUNT * 2;
 // const BOXES_SIZE = GAME_WIDTH / BOXES_COLUMN_COUNT;
 
 const NUMBER_OF_TETROMINOS = 7;
-const ONE_SECOND = 200;
+const ONE_SECOND = 500;
 let myPlay;
 
 let play = (dynamicGame, staticGame) => {
@@ -154,7 +154,7 @@ window.onload = () => {
     staticGame.createInitialStaticMatrix();
 
     //key listener
-    document.addEventListener("keydown", function (event) { GameUtil.keyDownHandler(event, dynamicGame.currentTetromino, staticGame.staticMatrix); }, false);
+    document.addEventListener("keydown", function (event) { GameUtil.keyDownHandler(event, dynamicGame, staticGame.staticMatrix); }, false);
 
     myPlay = setInterval(function () { play(dynamicGame, staticGame); }, ONE_SECOND);
 }
