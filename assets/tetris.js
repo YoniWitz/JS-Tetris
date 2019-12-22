@@ -75,7 +75,7 @@ window.onload = () => {
         setRandomTetromino: function () {
             let random = Math.round(Math.random() * (NUMBER_OF_TETROMINOS - 1));
             if (DEBUG) {
-                random = 6;
+                random = 1;
             }
 
             if (random === 0)

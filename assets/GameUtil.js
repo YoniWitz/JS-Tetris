@@ -111,7 +111,139 @@ export default class GameUtil {
                 this.moveLeft(dynamicGame.currentTetromino, staticMatrix);
                 break;
             case "ArrowUp":
-                dynamicGame.currentTetromino.rotate();
+                let tetrominoType = dynamicGame.currentTetromino.constructor.name;
+                let rotationState = dynamicGame.currentTetromino.rotationState;
+                let lowestRLocation = dynamicGame.currentTetromino.lowestRLocation;
+                let rotationCLocation = dynamicGame.currentTetromino.rotationCLocation;
+                let rotatePermittedFlag = true;
+                if (tetrominoType === "JTetromino") {
+                    if (rotationState === 0) {
+                        if (staticMatrix[lowestRLocation - 2][rotationCLocation].status === 1
+                            || staticMatrix[lowestRLocation - 2][rotationCLocation + 1].status === 1
+                            || staticMatrix[lowestRLocation - 1][rotationCLocation].status === 1) {
+                            rotatePermittedFlag = false
+                        }
+                    }
+                    if (rotationState === 1) {
+                        if (staticMatrix[lowestRLocation - 1][rotationCLocation - 1].status === 1
+                            || staticMatrix[lowestRLocation - 1][rotationCLocation + 1].status === 1
+                            || staticMatrix[lowestRLocation][rotationCLocation + 1].status === 1) {
+                            rotatePermittedFlag = false
+                        }
+                    }
+                    if (rotationState === 2) {
+                        if (staticMatrix[lowestRLocation - 2][rotationCLocation].status === 1
+                            || staticMatrix[lowestRLocation][rotationCLocation].status === 1
+                            || staticMatrix[lowestRLocation][rotationCLocation - 1].status === 1) {
+                            rotatePermittedFlag = false
+                        }
+                    }
+                    if (rotationState === 3) {
+                        if (staticMatrix[lowestRLocation - 1][rotationCLocation - 1].status === 1
+                            || staticMatrix[lowestRLocation][rotationCLocation + 1].status === 1) {
+                            rotatePermittedFlag = false
+                        }
+                    }
+                }
+                else if (tetrominoType === "LTetromino") {
+                    if (rotationState === 0) {
+                        if (staticMatrix[lowestRLocation - 1][rotationCLocation].status === 1
+                            || staticMatrix[lowestRLocation - 2][rotationCLocation].status === 1) {
+                            rotatePermittedFlag = false
+                        }
+                    }
+                    if (rotationState === 1) {
+                        if (staticMatrix[lowestRLocation - 1][rotationCLocation - 1].status === 1
+                            || staticMatrix[lowestRLocation - 1][rotationCLocation + 1].status === 1
+                            || staticMatrix[lowestRLocation][rotationCLocation - 1].status === 1) {
+                            rotatePermittedFlag = false
+                        }
+                    }
+                    if (rotationState === 2) {
+                        if (staticMatrix[lowestRLocation - 2][rotationCLocation - 1].status === 1
+                            || staticMatrix[lowestRLocation - 2][rotationCLocation].status === 1
+                            || staticMatrix[lowestRLocation][rotationCLocation].status === 1) {
+                            rotatePermittedFlag = false
+                        }
+                    }
+                    if (rotationState === 3) {
+                        if (staticMatrix[lowestRLocation - 1][rotationCLocation + 1].status === 1
+                            || staticMatrix[lowestRLocation][rotationCLocation - 1].status === 1
+                            || staticMatrix[lowestRLocation][rotationCLocation + 1].status === 1) {
+                            rotatePermittedFlag = false
+                        }
+                    }
+                }
+                else if (tetrominoType === "TTetromino") {
+                    if (rotationState === 0) {
+                        if (staticMatrix[lowestRLocation - 1][rotationCLocation + 1].status === 1
+                            || staticMatrix[lowestRLocation - 2][rotationCLocation].status === 1) {
+                            rotatePermittedFlag = false
+                        }
+                    }
+                    if (rotationState === 1) {
+                        if (staticMatrix[lowestRLocation - 1][rotationCLocation - 1].status === 1) {
+                            rotatePermittedFlag = false
+                        }
+                    }
+                    if (rotationState === 2) {
+                        if (staticMatrix[lowestRLocation - 2][rotationCLocation].status === 1) {
+                            rotatePermittedFlag = false
+                        }
+                    }
+                    if (rotationState === 3) {
+                        if (staticMatrix[lowestRLocation][rotationCLocation - 1].status === 1
+                            || staticMatrix[lowestRLocation][rotationCLocation + 1].status === 1) {
+                            rotatePermittedFlag = false
+                        }
+                    }
+                }
+                else if (tetrominoType === "ITetromino") {
+                    if (rotationState === 0) {
+                        if (staticMatrix[lowestRLocation - 1][rotationCLocation].status === 1
+                            || staticMatrix[lowestRLocation + 1][rotationCLocation].status === 1
+                            || staticMatrix[lowestRLocation + 2][rotationCLocation].status === 1) {
+                            rotatePermittedFlag = false
+                        }
+                    }
+                    if (rotationState === 1) {
+                        if (staticMatrix[lowestRLocation - 2][rotationCLocation - 2].status === 1
+                            || staticMatrix[lowestRLocation - 2][rotationCLocation - 1].status === 1
+                            || staticMatrix[lowestRLocation - 2][rotationCLocation + 1].status === 1) {
+                            rotatePermittedFlag = false
+                        }
+                    }
+                }
+                else if (tetrominoType === "STetromino") {
+                    if (rotationState === 0) {
+                        if (staticMatrix[lowestRLocation - 2][rotationCLocation - 1].status === 1
+                            || staticMatrix[lowestRLocation - 1][rotationCLocation - 1].status === 1) {
+                            rotatePermittedFlag = false
+                        }
+                    }
+                    if (rotationState === 1) {
+                        if (staticMatrix[lowestRLocation - 1][rotationCLocation + 1].status === 1
+                            || staticMatrix[lowestRLocation][rotationCLocation - 1].status === 1) {
+                            rotatePermittedFlag = false
+                        }
+                    }
+                }
+                else if (tetrominoType === "ZTetromino") {
+                    if (rotationState === 0) {
+                        if (staticMatrix[lowestRLocation - 2][rotationCLocation - 1].status === 1
+                            || staticMatrix[lowestRLocation - 1][rotationCLocation - 1].status === 1) {
+                            rotatePermittedFlag = false
+                        }
+                    }
+                    if (rotationState === 1) {
+                        if (staticMatrix[lowestRLocation - 1][rotationCLocation + 1].status === 1
+                            || staticMatrix[lowestRLocation][rotationCLocation - 1].status === 1) {
+                            rotatePermittedFlag = false
+                        }
+                    }
+                }
+                if (rotatePermittedFlag)
+                    dynamicGame.currentTetromino.rotate();
                 break;
             //down arrow
             case "ArrowDown":
@@ -130,13 +262,13 @@ export default class GameUtil {
         for (let r = 0; r < matrix.length; r++) {
             for (let c = 0; c < matrix[r].length; c++) {
                 if (matrix[r][c].status === 0) {
-                    color = "gray"
+                    color = "red"
                 }
                 else {
-                    color = "black"
+                    color = "yellow"
                 }
 
-                if (isBackground || color === "black") {
+                if (isBackground || color === "yellow") {
                     ctx.beginPath();
                     //outer box
                     ctx.strokeRect(matrix[r][c].outerX, matrix[r][c].outerY, BOXES_BORDER_WIDTH, BOXES_BORDER_HEIGHT);
