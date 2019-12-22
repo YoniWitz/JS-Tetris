@@ -91,11 +91,18 @@ export default class GameUtil {
     //key listener function
     static keyDownHandler = (event, dynamicGame, staticMatrix) => {
         var key = event.key;
+        let tetrominosCollision;
         switch (key) {
             //spacebar           
             case "Spacebar":
             case " ":
-
+                tetrominosCollision = this.detectBottomCollision(dynamicGame.currentTetromino, staticMatrix);
+                while (!tetrominosCollision && dynamicGame.currentTetromino.lowestRLocation < BOXES_ROW_COUNT - 1) {
+                    //add new row to top of tetromino
+                    dynamicGame.addNewRowToCurrentTetromino();
+                    dynamicGame.currentTetromino.lowestRLocation++;
+                    tetrominosCollision = this.detectBottomCollision(dynamicGame.currentTetromino, staticMatrix);
+                }
                 break;
             case "ArrowRight":
                 this.moveRight(dynamicGame.currentTetromino, staticMatrix);
@@ -108,9 +115,9 @@ export default class GameUtil {
                 break;
             //down arrow
             case "ArrowDown":
-                let tetrominosCollision = this.detectBottomCollision(dynamicGame.currentTetromino, staticMatrix);
+                tetrominosCollision = this.detectBottomCollision(dynamicGame.currentTetromino, staticMatrix);
                 //if no tetromino underneath and not on bottom row
-                if (!tetrominosCollision && dynamicGame.currentTetromino.lowestRLocation <BOXES_ROW_COUNT -1) {
+                if (!tetrominosCollision && dynamicGame.currentTetromino.lowestRLocation < BOXES_ROW_COUNT - 1) {
                     //add new row to top of tetromino
                     dynamicGame.addNewRowToCurrentTetromino();
                     dynamicGame.currentTetromino.lowestRLocation++;
