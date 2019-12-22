@@ -23,7 +23,7 @@ export default class GameUtil {
     static drawScore() {
         ctx.font = "15px Arial";
         ctx.fillStyle = "#0095DD";
-        ctx.fillText("Score: " + this.score, canvas.width - 85  , 20);
+        ctx.fillText("Score: " + this.score, canvas.width - 85, 20);
     }
     static moveRight(currentTetromino, staticMatrix) {
         //if tetromino  pressed against right wall
@@ -67,10 +67,10 @@ export default class GameUtil {
         currentTetromino.moveLeft();
     }
 
-    static detectEndOfGame(currentTetromino, staticMatrix){
+    static detectEndOfGame(currentTetromino, staticMatrix) {
         for (let c = currentTetromino.farLeftCLocation; c <= currentTetromino.farRightCLocation; c++) {
             if (staticMatrix[3][c].status === 1 && currentTetromino.tetrominoMatrix[2][c].status === 1) {
-               this.endOfGame = true;
+                this.endOfGame = true;
             }
         }
     }
@@ -79,6 +79,7 @@ export default class GameUtil {
         if (currentTetromino.lowestRLocation < BOXES_ROW_COUNT - 1) {
             //check bottom 3 rows of tetromino if collides with static matrix
             for (let r = currentTetromino.lowestRLocation - 2; r <= currentTetromino.lowestRLocation; r++) {
+                if (r < 0) continue;
                 for (let c = currentTetromino.farLeftCLocation; c <= currentTetromino.farRightCLocation; c++) {
                     if (currentTetromino.tetrominoMatrix[r][c].status === 1 && staticMatrix[r + 1][c].status === 1)
                         return true;
@@ -94,7 +95,7 @@ export default class GameUtil {
             //spacebar           
             case "Spacebar":
             case " ":
-               
+
                 break;
             case "ArrowRight":
                 this.moveRight(dynamicGame.currentTetromino, staticMatrix);
@@ -108,8 +109,8 @@ export default class GameUtil {
             //down arrow
             case "ArrowDown":
                 let tetrominosCollision = this.detectBottomCollision(dynamicGame.currentTetromino, staticMatrix);
-                //if no tetromino underneath
-                if (!tetrominosCollision) {
+                //if no tetromino underneath and not on bottom row
+                if (!tetrominosCollision && dynamicGame.currentTetromino.lowestRLocation <BOXES_ROW_COUNT -1) {
                     //add new row to top of tetromino
                     dynamicGame.addNewRowToCurrentTetromino();
                     dynamicGame.currentTetromino.lowestRLocation++;

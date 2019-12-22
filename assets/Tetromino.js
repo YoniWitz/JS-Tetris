@@ -1,8 +1,7 @@
 const BOXES_COLUMN_COUNT = 10;
 const BOXES_ROW_COUNT = BOXES_COLUMN_COUNT * 2;
 class Tetromino {
-    rotationState = 0;
-    keydownFlag = false;
+
 
     moveRight() {
         this.keydownFlag = true;
@@ -43,6 +42,8 @@ class Tetromino {
         this.tetrominoMatrix = this.createTetrominoMatrix(onesMatrix);
         this.tetrominoNumOfColumns = this.tetrominoMatrix[0].length;
         this.lowestRLocation = 2;
+        this.rotationState = 1;
+        this.keydownFlag = false;
     }
 }
 
@@ -61,14 +62,16 @@ export class ITetromino extends Tetromino {
                 this.rotationState++;
                 this.keydownFlag = true;
 
-                this.lowestRLocation--;
+
                 this.farLeftCLocation = this.rotationCLocation - 2;
                 this.farRightCLocation = this.rotationCLocation + 1;
 
                 //erase vertical
-                for (let r = this.lowestRLocation - 2; r < this.tetrominoMatrix.length; r++) {
+                for (let r = this.lowestRLocation - 3; r < this.tetrominoMatrix.length; r++) {
                     this.tetrominoMatrix[r][this.rotationCLocation].status = 0;
                 }
+
+                this.lowestRLocation -= 2;
 
                 //create horizontal
                 for (let c = this.farLeftCLocation; c <= this.farRightCLocation; c++) {
@@ -78,7 +81,7 @@ export class ITetromino extends Tetromino {
         }
         //switching from horizontal to vertical
         else {
-            //if iTetromino on bottom 2 rows row or if tetromino on top row
+            //if iTetromino on bottom 2 rows or if tetromino on top row
             if (this.lowestRLocation >= BOXES_ROW_COUNT - 2 || this.lowestRLocation === 0) {
                 //do nothing
             }
@@ -86,14 +89,14 @@ export class ITetromino extends Tetromino {
                 this.rotationState++;
                 this.keydownFlag = true;
 
-                this.lowestRLocation++;
-                this.farLeftCLocation = this.farRightCLocation = this.rotationCLocation;
-
                 //erase horizontal
-                for (let c = 0; c < this.tetrominoNumOfColumns; c++) {
-                    this.tetrominoMatrix[this.lowestRLocation - 1][c].status = 0;
+                for (let c = this.farLeftCLocation; c <= this.farRightCLocation; c++) {
+                    this.tetrominoMatrix[this.lowestRLocation][c].status = 0;
                 }
 
+                this.lowestRLocation += 2;
+
+                this.farLeftCLocation = this.farRightCLocation = this.rotationCLocation;
                 //create vertical
                 for (let r = this.lowestRLocation - 3; r < this.tetrominoMatrix.length; r++) {
                     this.tetrominoMatrix[r][this.rotationCLocation].status = 1;
@@ -103,10 +106,11 @@ export class ITetromino extends Tetromino {
     }
 
     constructor() {
-        super([{ r: 2, c: 3 }, { r: 2, c: 4 }, { r: 2, c: 5 }, { r: 2, c: 6 }]);
-        this.farLeftCLocation = 3;
-        this.farRightCLocation = 6;
-        this.rotationCLocation = 5;        
+        super([{ r: 0, c: 5 }, { r: 1, c: 5 }, { r: 2, c: 5 }, { r: 3, c: 5 }]);
+        this.farLeftCLocation = 5;
+        this.farRightCLocation = 5;
+        this.rotationCLocation = 5;
+        this.lowestRLocation = 3;
     }
 }
 
@@ -203,10 +207,10 @@ export class JTetromino extends Tetromino {
     }
 
     constructor() {
-        super([{ r: 1, c: 3 }, { r: 2, c: 3 }, { r: 2, c: 4 }, { r: 2, c: 5 }]);
-        this.farLeftCLocation = 3;
+        super([{ r: 0, c: 4 }, { r: 0, c: 5 }, { r: 1, c: 4 }, { r: 2, c: 4 }]);
+        this.farLeftCLocation = 4;
         this.farRightCLocation = 5;
-        this.rotationCLocation = 4;       
+        this.rotationCLocation = 4;
     }
 }
 
@@ -303,8 +307,8 @@ export class LTetromino extends Tetromino {
     }
 
     constructor() {
-        super([{ r: 1, c: 5 }, { r: 2, c: 3 }, { r: 2, c: 4 }, { r: 2, c: 5 }]);
-        this.farLeftCLocation = 3;
+        super([{ r: 0, c: 4 }, { r: 1, c: 4 }, { r: 2, c: 4 }, { r: 2, c: 5 }]);
+        this.farLeftCLocation = 4;
         this.farRightCLocation = 5;
         this.rotationCLocation = 4;
     }
@@ -312,10 +316,10 @@ export class LTetromino extends Tetromino {
 
 export class OTetromino extends Tetromino {
     constructor() {
-        super([{ r: 1, c: 4 }, { r: 1, c: 5 }, { r: 2, c: 4 }, { r: 2, c: 5 }]);
+        super([{ r: 1, c: 4 }, { r: 1, c: 5 }, { r: 0, c: 4 }, { r: 0, c: 5 }]);
         this.farLeftCLocation = 4;
         this.farRightCLocation = 5;
-        this.rotationCLocation = 5;
+        this.lowestRLocation = 1;
     }
 }
 
@@ -367,11 +371,10 @@ export class STetromino extends Tetromino {
     }
 
     constructor() {
-        super([{ r: 1, c: 4 }, { r: 1, c: 5 }, { r: 2, c: 3 }, { r: 2, c: 4 }]);
+        super([{ r: 0, c: 3 }, { r: 1, c: 3 }, { r: 1, c: 4 }, { r: 2, c: 4 }]);
         this.farLeftCLocation = 3;
-        this.farRightCLocation = 5;
+        this.farRightCLocation = 4;
         this.rotationCLocation = 4;
-        
     }
 }
 
@@ -455,9 +458,9 @@ export class TTetromino extends Tetromino {
         }
     }
     constructor() {
-        super([{ r: 1, c: 4 }, { r: 2, c: 3 }, { r: 2, c: 4 }, { r: 2, c: 5 }]);
+        super([{ r: 0, c: 4 }, { r: 1, c: 5 }, { r: 1, c: 4 }, { r: 2, c: 4 }]);
         this.farLeftCLocation = 3;
-        this.farRightCLocation = 5;
+        this.farRightCLocation = 4;
         this.rotationCLocation = 4;
     }
 }
@@ -509,8 +512,8 @@ export class ZTetromino extends Tetromino {
         }
     }
     constructor() {
-        super([{ r: 1, c: 3 }, { r: 1, c: 4 }, { r: 2, c: 4 }, { r: 2, c: 5 }]);
-        this.farLeftCLocation = 3;
+        super([{ r: 0, c: 5 }, { r: 1, c: 4 }, { r: 1, c: 5 }, { r: 2, c: 4 }]);
+        this.farLeftCLocation = 4;
         this.farRightCLocation = 5;
         this.rotationCLocation = 4;
     }

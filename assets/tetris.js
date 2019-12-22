@@ -75,7 +75,7 @@ window.onload = () => {
         setRandomTetromino: function () {
             let random = Math.round(Math.random() * (NUMBER_OF_TETROMINOS - 1));
             if (DEBUG) {
-                random = 0;
+                random = 6;
             }
 
             if (random === 0)
@@ -124,7 +124,7 @@ window.onload = () => {
 
         addTetrominoToStaticMatrix(tetromino) {
             for (let r = tetromino.lowestRLocation - 3; r <= tetromino.lowestRLocation; r++) {
-                if (r < 0) {
+                if (r < 0 || r>=BOXES_ROW_COUNT) {
                     return;
                 }
                 let count = 0;
