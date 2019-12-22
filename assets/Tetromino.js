@@ -49,17 +49,14 @@ class Tetromino {
 
 export class ITetromino extends Tetromino {
     rotate() {
-        //iTetromino has only two positions
-        if (this.rotationState > 1) {
-            this.rotationState = 0;
-        }
         //switching from vertical to horizontal
         if (this.rotationState === 1) {
             //if iTetromino against left wall or one away from left wall or against right wall, cant rotate
             if (this.farLeftCLocation < 2 || this.farRightCLocation === this.tetrominoNumOfColumns - 1) {
             }
             else {
-                this.rotationState++;
+                //iTetromino has only two states
+                this.rotationState = 0;
                 this.keydownFlag = true;
 
 
@@ -116,10 +113,6 @@ export class ITetromino extends Tetromino {
 
 export class JTetromino extends Tetromino {
     rotate() {
-        //jTetromino has four positions
-        if (this.rotationState > 3) {
-            this.rotationState = 0;
-        }
         //rotate from horizontal to vertical
         if (this.rotationState === 0) {
             //if lTetromino against top wall, cant rotate
@@ -191,7 +184,8 @@ export class JTetromino extends Tetromino {
                 //do nothing
             }
             else {
-                this.rotationState++;
+                //jTetromino has four states
+                this.rotationState = 0;
                 this.keydownFlag = true;
 
                 this.farRightCLocation = this.rotationCLocation + 1;
@@ -216,10 +210,6 @@ export class JTetromino extends Tetromino {
 
 export class LTetromino extends Tetromino {
     rotate() {
-        //lTetromino has four positions
-        if (this.rotationState > 3) {
-            this.rotationState = 0;
-        }
         //rotate from horizontal to vertical
         if (this.rotationState === 0) {
             //if lTetromino against top wall, cant rotate
@@ -289,7 +279,9 @@ export class LTetromino extends Tetromino {
                 //do nothing
             }
             else {
-                this.rotationState++;
+                //lTetromino has four states      
+                this.rotationState = 0;
+
                 this.keydownFlag = true;
 
                 this.farRightCLocation = this.rotationCLocation + 1;
@@ -315,6 +307,7 @@ export class LTetromino extends Tetromino {
 }
 
 export class OTetromino extends Tetromino {
+    rotate() { }
     constructor() {
         super([{ r: 1, c: 4 }, { r: 1, c: 5 }, { r: 0, c: 4 }, { r: 0, c: 5 }]);
         this.farLeftCLocation = 4;
@@ -325,17 +318,16 @@ export class OTetromino extends Tetromino {
 
 export class STetromino extends Tetromino {
     rotate() {
-        //sTetromino has only two positions
-        if (this.rotationState > 1) {
-            this.rotationState = 0;
-        }
+
         //switching from vertical to horizontal
         if (this.rotationState === 1) {
             //if sTetromino against right wall, cant rotate
             if (this.farRightCLocation === this.tetrominoNumOfColumns - 1) {
             }
             else {
-                this.rotationState++;
+                //sTetromino has only two states
+                this.rotationState = 0;
+
                 this.keydownFlag = true;
 
                 this.farRightCLocation = this.rotationCLocation + 1;
@@ -380,10 +372,6 @@ export class STetromino extends Tetromino {
 
 export class TTetromino extends Tetromino {
     rotate() {
-        //tTetromino has four positions
-        if (this.rotationState > 3) {
-            this.rotationState = 0;
-        }
         //rotate from horizontal to vertical
         if (this.rotationState === 2) {
             //if zTetromino against top wall, cant rotate
@@ -407,7 +395,8 @@ export class TTetromino extends Tetromino {
                 //do nothing
             }
             else {
-                this.rotationState++;
+                //tTetromino has four states
+                this.rotationState = 0;
                 this.keydownFlag = true;
 
                 this.farRightCLocation = this.rotationCLocation + 1;
@@ -459,25 +448,23 @@ export class TTetromino extends Tetromino {
     }
     constructor() {
         super([{ r: 0, c: 4 }, { r: 1, c: 5 }, { r: 1, c: 4 }, { r: 2, c: 4 }]);
-        this.farLeftCLocation = 3;
-        this.farRightCLocation = 4;
+        this.farLeftCLocation = 4;
+        this.farRightCLocation = 5;
         this.rotationCLocation = 4;
     }
 }
 
 export class ZTetromino extends Tetromino {
     rotate() {
-        //zTetromino has only two positions
-        if (this.rotationState > 1) {
-            this.rotationState = 0;
-        }
         //switching from vertical to horizontal
         if (this.rotationState === 1) {
             //if zTetromino against left wall, cant rotate
             if (this.farLeftCLocation === 0) {
             }
             else {
-                this.rotationState++;
+
+                //zTetromino has only two states      
+                this.rotationState = 0;
                 this.keydownFlag = true;
 
                 this.farLeftCLocation = this.rotationCLocation - 1;
