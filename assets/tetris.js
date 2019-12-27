@@ -3,6 +3,9 @@ import * as Tetromino from './Tetromino.js'
 const DEBUG = false;
 let canvas = document.getElementById("myCanvas");
 let ctx = canvas.getContext("2d");
+//banner area
+let banner = document.getElementById('gameBanner');
+let bannerContext = banner.getContext('2d');
 
 const CANVAS_WIDTH = document.getElementById('myCanvas').width;
 const GAME_WIDTH = CANVAS_WIDTH * .75;
@@ -26,10 +29,10 @@ let play = (dynamicGame, staticGame) => {
     }
     else {
         GameUtil.detectEndOfGame(dynamicGame.currentTetromino, staticGame.staticMatrix)
-        if(GameUtil.endOfGame){
+        if (GameUtil.endOfGame) {
             clearInterval(myPlay);
             alert('game over, you lose. Press okay to start over');
-            window.location.reload();  
+            window.location.reload();
         }
         //detect collision with another tetromino
         let tetrominosCollision = GameUtil.detectBottomCollision(dynamicGame.currentTetromino, staticGame.staticMatrix);
@@ -124,7 +127,7 @@ window.onload = () => {
 
         addTetrominoToStaticMatrix(tetromino) {
             for (let r = tetromino.lowestRLocation - 3; r <= tetromino.lowestRLocation; r++) {
-                if (r < 0 || r>=BOXES_ROW_COUNT) {
+                if (r < 0 || r >= BOXES_ROW_COUNT) {
                     return;
                 }
                 let count = 0;
@@ -155,7 +158,23 @@ window.onload = () => {
 
     //key listener
     document.addEventListener("keydown", function (event) { GameUtil.keyDownHandler(event, dynamicGame, staticGame.staticMatrix); }, false);
-
+    drawBanner();
     myPlay = setInterval(function () { play(dynamicGame, staticGame); }, ONE_SECOND);
+}
+
+let drawBanner = () => {
+    bannerContext.fillStyle = 'white';
+    bannerContext.fillRect(0, 0, banner.width, banner.height);
+    bannerContext.font = "30px Arial";
+    bannerContext.fillStyle = 'black';
+    bannerContext.fillText("My Tetris Game", 50, 30);
+    bannerContext.font = "20px Arial";
+   
+    bannerContext.fillText("Instructions: ", 50, 60);
+    bannerContext.fillText("1. Use right and left keyboard arrows to navigate.", 50, 90);
+    bannerContext.fillText("2. Press up arrow to rotate tetromino", 50, 120);
+    bannerContext.fillText("3. Press down arrow to jump one line", 50, 150);
+    bannerContext.fillText("4. Press spacebar to drop the tetromino to the bottom", 50, 180);
+    bannerContext.fillText("Earn 100 points for every filled line", 50, 250);
 }
 
