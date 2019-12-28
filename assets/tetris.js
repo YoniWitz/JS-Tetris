@@ -13,9 +13,9 @@ const CANVAS_HEIGHT = document.getElementById('myCanvas').height;
 const PADDING = 5;
 
 //Boxes
-const BOXES_COLUMN_COUNT = 10;
-const BOXES_ROW_COUNT = BOXES_COLUMN_COUNT * 2;
-// const BOXES_SIZE = GAME_WIDTH / BOXES_COLUMN_COUNT;
+const BOXES_COLUMN_LENGTH = 10;
+const BOXES_ROW_LENGTH = BOXES_COLUMN_LENGTH * 2;
+// const BOXES_SIZE = GAME_WIDTH / BOXES_COLUMN_LENGTH;
 
 const NUMBER_OF_TETROMINOS = 7;
 const ONE_SECOND = 500;
@@ -37,7 +37,7 @@ let play = (dynamicGame, staticGame) => {
         //detect collision with another tetromino
         let tetrominosCollision = GameUtil.detectBottomCollision(dynamicGame.currentTetromino, staticGame.staticMatrix);
         //if tetromino hit the bottom or collids with another tetromino
-        if (dynamicGame.currentTetromino.lowestRLocation >= BOXES_ROW_COUNT - 1 || tetrominosCollision) {
+        if (dynamicGame.currentTetromino.lowestRLocation >= BOXES_ROW_LENGTH - 1 || tetrominosCollision) {
             staticGame.addTetrominoToStaticMatrix(dynamicGame.currentTetromino);
             dynamicGame.setRandomTetromino();
         }
@@ -69,7 +69,7 @@ window.onload = () => {
 
         newRow: function () {
             let newRow = [];
-            for (let c = 0; c < BOXES_COLUMN_COUNT; c++) {
+            for (let c = 0; c < BOXES_COLUMN_LENGTH; c++) {
                 newRow[c] = { status: 0 };
             }
             return newRow;
@@ -78,7 +78,7 @@ window.onload = () => {
         setRandomTetromino: function () {
             let random = Math.round(Math.random() * (NUMBER_OF_TETROMINOS) - 0.5);
             if (DEBUG) {
-                random = 1;
+                random = 6;
             }
 
             if (random === 0)
@@ -108,9 +108,9 @@ window.onload = () => {
         staticMatrix: [],
 
         createInitialStaticMatrix: function () {
-            for (let r = 0; r < BOXES_ROW_COUNT; r++) {
+            for (let r = 0; r < BOXES_ROW_LENGTH; r++) {
                 this.staticMatrix[r] = [];
-                for (let c = 0; c < BOXES_COLUMN_COUNT; c++) {
+                for (let c = 0; c < BOXES_COLUMN_LENGTH; c++) {
                     this.staticMatrix[r][c] = { status: 0 };
                 }
             }
@@ -119,7 +119,7 @@ window.onload = () => {
 
         newRow: function () {
             let newRow = [];
-            for (let c = 0; c < BOXES_COLUMN_COUNT; c++) {
+            for (let c = 0; c < BOXES_COLUMN_LENGTH; c++) {
                 newRow[c] = { status: 0 };
             }
             return newRow;
@@ -127,7 +127,7 @@ window.onload = () => {
 
         addTetrominoToStaticMatrix(tetromino) {
             for (let r = tetromino.lowestRLocation - 3; r <= tetromino.lowestRLocation; r++) {
-                if (r < 0 || r >= BOXES_ROW_COUNT) {
+                if (r < 0 || r >= BOXES_ROW_LENGTH) {
                     return;
                 }
                 let count = 0;
