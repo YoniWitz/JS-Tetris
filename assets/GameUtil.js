@@ -4,10 +4,10 @@ const CANVAS_WIDTH = document.getElementById('myCanvas').width;
 const GAME_WIDTH = CANVAS_WIDTH * .75;
 
 //Boxes
-const BOXES_COLUMN_COUNT = 10;
+const BOXES_COLUMN_LENGTH = 10;
 
-const BOXES_ROW_COUNT = BOXES_COLUMN_COUNT * 2;
-const BOXES_SIZE = GAME_WIDTH / BOXES_COLUMN_COUNT;
+const BOXES_ROW_LENGTH = BOXES_COLUMN_LENGTH * 2;
+const BOXES_SIZE = GAME_WIDTH / BOXES_COLUMN_LENGTH;
 const BOXES_PADDING = 2;
 const BOXES_BORDER_WIDTH = BOXES_SIZE - 2 * BOXES_PADDING;
 const BOXES_BORDER_HEIGHT = BOXES_BORDER_WIDTH;
@@ -30,19 +30,29 @@ export default class GameUtil {
         if (currentTetromino.farRightCLocation >= (currentTetromino.tetrominoNumOfColumns - 1)) {
             return;
         }
-        //tetromino exists where user wants to move
-        if (
-            (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation][currentTetromino.farRightCLocation].status === 1
-                && staticMatrix[currentTetromino.lowestRLocation][currentTetromino.farRightCLocation + 1].status === 1)
-            ||
-            (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation - 1][currentTetromino.farRightCLocation].status === 1
-                && staticMatrix[currentTetromino.lowestRLocation - 1][currentTetromino.farRightCLocation + 1].status === 1)
-            ||
-            (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation - 2][currentTetromino.farRightCLocation].status === 1
-                && staticMatrix[currentTetromino.lowestRLocation - 2][currentTetromino.farRightCLocation + 1].status === 1)
-        ) {
-            return;
+        //check if tetromino exists where user wants to move
+        for (let r = currentTetromino.lowestRLocation - 2; r <= currentTetromino.lowestRLocation; r++) {
+            for (let c = currentTetromino.farLeftCLocation; c <= currentTetromino.farRightCLocation; c++) {
+                if (currentTetromino.tetrominoMatrix[r][c].status === 1 && staticMatrix[r][c + 1].status === 1)
+                    return;
+            }
         }
+
+        // if (
+        //     (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation][currentTetromino.farRightCLocation].status === 1
+        //         && staticMatrix[currentTetromino.lowestRLocation][currentTetromino.farRightCLocation + 1].status === 1)
+        //     ||
+        //     (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation][currentTetromino.farRightCLocation - 1].status === 1
+        //         && staticMatrix[currentTetromino.lowestRLocation][currentTetromino.farRightCLocation].status === 1)
+        //     ||
+        //     (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation - 1][currentTetromino.farRightCLocation].status === 1
+        //         && staticMatrix[currentTetromino.lowestRLocation - 1][currentTetromino.farRightCLocation + 1].status === 1)
+        //     ||
+        //     (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation - 2][currentTetromino.farRightCLocation].status === 1
+        //         && staticMatrix[currentTetromino.lowestRLocation - 2][currentTetromino.farRightCLocation + 1].status === 1)
+        // ) {
+        //     return;
+        // }
         currentTetromino.moveRight();
     }
 
@@ -51,19 +61,27 @@ export default class GameUtil {
         if (currentTetromino.farLeftCLocation <= 0) {
             return;
         }
-        //tetromino exists where user wants to move
-        if (
-            (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation][currentTetromino.farLeftCLocation].status === 1
-                && staticMatrix[currentTetromino.lowestRLocation][currentTetromino.farLeftCLocation - 1].status === 1)
-            ||
-            (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation - 1][currentTetromino.farLeftCLocation].status === 1
-                && staticMatrix[currentTetromino.lowestRLocation - 1][currentTetromino.farLeftCLocation - 1].status === 1)
-            ||
-            (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation - 2][currentTetromino.farLeftCLocation].status === 1
-                && staticMatrix[currentTetromino.lowestRLocation - 2][currentTetromino.farLeftCLocation - 1].status === 1)
-        ) {
-            return;
+
+        //check if tetromino exists where user wants to move
+        for (let r = currentTetromino.lowestRLocation - 2; r <= currentTetromino.lowestRLocation; r++) {
+            for (let c = currentTetromino.farLeftCLocation; c <= currentTetromino.farRightCLocation; c++) {
+                if (currentTetromino.tetrominoMatrix[r][c].status === 1 && staticMatrix[r][c - 1].status === 1)
+                    return;
+            }
         }
+
+        // if (
+        //     (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation][currentTetromino.farLeftCLocation].status === 1
+        //         && staticMatrix[currentTetromino.lowestRLocation][currentTetromino.farLeftCLocation - 1].status === 1)
+        //     ||
+        //     (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation - 1][currentTetromino.farLeftCLocation].status === 1
+        //         && staticMatrix[currentTetromino.lowestRLocation - 1][currentTetromino.farLeftCLocation - 1].status === 1)
+        //     ||
+        //     (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation - 2][currentTetromino.farLeftCLocation].status === 1
+        //         && staticMatrix[currentTetromino.lowestRLocation - 2][currentTetromino.farLeftCLocation - 1].status === 1)
+        // ) {
+        //     return;
+        // }
         currentTetromino.moveLeft();
     }
 
@@ -76,7 +94,7 @@ export default class GameUtil {
     }
     static detectBottomCollision(currentTetromino, staticMatrix) {
         //if tetromino not on bottom row
-        if (currentTetromino.lowestRLocation < BOXES_ROW_COUNT - 1) {
+        if (currentTetromino.lowestRLocation < BOXES_ROW_LENGTH - 1) {
             //check bottom 3 rows of tetromino if collides with static matrix
             for (let r = currentTetromino.lowestRLocation - 2; r <= currentTetromino.lowestRLocation; r++) {
                 if (r < 0) continue;
@@ -97,7 +115,7 @@ export default class GameUtil {
             case "Spacebar":
             case " ":
                 tetrominosCollision = this.detectBottomCollision(dynamicGame.currentTetromino, staticMatrix);
-                while (!tetrominosCollision && dynamicGame.currentTetromino.lowestRLocation < BOXES_ROW_COUNT - 1) {
+                while (!tetrominosCollision && dynamicGame.currentTetromino.lowestRLocation < BOXES_ROW_LENGTH - 1) {
                     //add new row to top of tetromino
                     dynamicGame.addNewRowToCurrentTetromino();
                     dynamicGame.currentTetromino.lowestRLocation++;
@@ -115,130 +133,241 @@ export default class GameUtil {
                 let rotationState = dynamicGame.currentTetromino.rotationState;
                 let lowestRLocation = dynamicGame.currentTetromino.lowestRLocation;
                 let rotationCLocation = dynamicGame.currentTetromino.rotationCLocation;
+                let farLeftCLocation = dynamicGame.currentTetromino.farLeftCLocation;
+                let farRightCLocation = dynamicGame.currentTetromino.farRightCLocation;
                 let rotatePermittedFlag = true;
+
                 if (tetrominoType === "JTetromino") {
                     if (rotationState === 0) {
-                        if (staticMatrix[lowestRLocation - 2][rotationCLocation].status === 1
-                            || staticMatrix[lowestRLocation - 2][rotationCLocation + 1].status === 1
-                            || staticMatrix[lowestRLocation - 1][rotationCLocation].status === 1) {
-                            rotatePermittedFlag = false
+                        //if jTetromino against top wall, cant rotate
+                        if (lowestRLocation === 0) {
+                            rotatePermittedFlag = false;
+                        }
+                        else {
+                            if (staticMatrix[lowestRLocation - 2][rotationCLocation].status === 1
+                                || staticMatrix[lowestRLocation - 2][rotationCLocation + 1].status === 1
+                                || staticMatrix[lowestRLocation - 1][rotationCLocation].status === 1) {
+                                rotatePermittedFlag = false;
+                            }
                         }
                     }
                     if (rotationState === 1) {
-                        if (staticMatrix[lowestRLocation - 1][rotationCLocation - 1].status === 1
-                            || staticMatrix[lowestRLocation - 1][rotationCLocation + 1].status === 1
-                            || staticMatrix[lowestRLocation][rotationCLocation + 1].status === 1) {
-                            rotatePermittedFlag = false
+                        //if jTetromino against left wall, can't rotate
+                        if (farLeftCLocation === 0) {
+                            rotatePermittedFlag = false;
+                        }
+                        else {
+                            if (staticMatrix[lowestRLocation - 1][rotationCLocation - 1].status === 1
+                                || staticMatrix[lowestRLocation - 1][rotationCLocation + 1].status === 1
+                                || staticMatrix[lowestRLocation][rotationCLocation + 1].status === 1) {
+                                rotatePermittedFlag = false;
+                            }
                         }
                     }
                     if (rotationState === 2) {
-                        if (staticMatrix[lowestRLocation - 2][rotationCLocation].status === 1
-                            || staticMatrix[lowestRLocation][rotationCLocation].status === 1
-                            || staticMatrix[lowestRLocation][rotationCLocation - 1].status === 1) {
-                            rotatePermittedFlag = false
+                        //if jTetromino on top row, can't rotate
+                        if (lowestRLocation === 0) {
+                            rotatePermittedFlag = false;
+                        }
+                        else {
+                            if (staticMatrix[lowestRLocation - 2][rotationCLocation].status === 1
+                                || staticMatrix[lowestRLocation][rotationCLocation].status === 1
+                                || staticMatrix[lowestRLocation][rotationCLocation - 1].status === 1) {
+                                rotatePermittedFlag = false;
+                            }
                         }
                     }
                     if (rotationState === 3) {
-                        if (staticMatrix[lowestRLocation - 1][rotationCLocation - 1].status === 1
-                            || staticMatrix[lowestRLocation][rotationCLocation + 1].status === 1) {
-                            rotatePermittedFlag = false
+                        //if jTetromino against right wall, can't rotate
+                        if (farRightCLocation === BOXES_COLUMN_LENGTH - 1) {
+                            rotatePermittedFlag = false;
+                        }
+                        else {
+                            if (staticMatrix[lowestRLocation - 1][rotationCLocation - 1].status === 1
+                                || staticMatrix[lowestRLocation][rotationCLocation + 1].status === 1) {
+                                rotatePermittedFlag = false;
+                            }
                         }
                     }
                 }
                 else if (tetrominoType === "LTetromino") {
                     if (rotationState === 0) {
-                        if (staticMatrix[lowestRLocation - 1][rotationCLocation].status === 1
-                            || staticMatrix[lowestRLocation - 2][rotationCLocation].status === 1) {
-                            rotatePermittedFlag = false
+                        //if lTetromino against top wall, cant rotate
+                        if (lowestRLocation === 0) {
+                            rotatePermittedFlag = false;
+                        }
+                        else {
+                            if (staticMatrix[lowestRLocation - 1][rotationCLocation].status === 1
+                                || staticMatrix[lowestRLocation - 2][rotationCLocation].status === 1) {
+                                rotatePermittedFlag = false;
+                            }
                         }
                     }
                     if (rotationState === 1) {
-                        if (staticMatrix[lowestRLocation - 1][rotationCLocation - 1].status === 1
-                            || staticMatrix[lowestRLocation - 1][rotationCLocation + 1].status === 1
-                            || staticMatrix[lowestRLocation][rotationCLocation - 1].status === 1) {
-                            rotatePermittedFlag = false
+                        //if lTetromino against left wall, can't rotate
+                        if (farLeftCLocation === 0) {
+                            rotatePermittedFlag = false;
+                        }
+                        else {
+                            if (staticMatrix[lowestRLocation - 1][rotationCLocation - 1].status === 1
+                                || staticMatrix[lowestRLocation - 1][rotationCLocation + 1].status === 1
+                                || staticMatrix[lowestRLocation][rotationCLocation - 1].status === 1) {
+                                rotatePermittedFlag = false;
+                            }
                         }
                     }
                     if (rotationState === 2) {
-                        if (staticMatrix[lowestRLocation - 2][rotationCLocation - 1].status === 1
-                            || staticMatrix[lowestRLocation - 2][rotationCLocation].status === 1
-                            || staticMatrix[lowestRLocation][rotationCLocation].status === 1) {
-                            rotatePermittedFlag = false
+                        //if lTetromino on top row, can't rotate
+                        if (lowestRLocation === 0) {
+                            rotatePermittedFlag = false;
+                        }
+                        else {
+                            if (staticMatrix[lowestRLocation - 2][rotationCLocation - 1].status === 1
+                                || staticMatrix[lowestRLocation - 2][rotationCLocation].status === 1
+                                || staticMatrix[lowestRLocation][rotationCLocation].status === 1) {
+                                rotatePermittedFlag = false;
+                            }
                         }
                     }
                     if (rotationState === 3) {
-                        if (staticMatrix[lowestRLocation - 1][rotationCLocation + 1].status === 1
-                            || staticMatrix[lowestRLocation][rotationCLocation - 1].status === 1
-                            || staticMatrix[lowestRLocation][rotationCLocation + 1].status === 1) {
-                            rotatePermittedFlag = false
+                        //if lTetromino against right wall, can't rotate
+                        if (farRightCLocation === BOXES_COLUMN_LENGTH - 1) {
+                            rotatePermittedFlag = false;
+                        }
+                        else {
+                            if (staticMatrix[lowestRLocation - 1][rotationCLocation + 1].status === 1
+                                || staticMatrix[lowestRLocation][rotationCLocation - 1].status === 1
+                                || staticMatrix[lowestRLocation][rotationCLocation + 1].status === 1) {
+                                rotatePermittedFlag = false;
+                            }
                         }
                     }
                 }
                 else if (tetrominoType === "TTetromino") {
                     if (rotationState === 0) {
-                        if (staticMatrix[lowestRLocation - 1][rotationCLocation + 1].status === 1
-                            || staticMatrix[lowestRLocation - 2][rotationCLocation].status === 1) {
-                            rotatePermittedFlag = false
+                        //if tTetromino on top row, can't rotate
+                        if (lowestRLocation === 0) {
+                            rotatePermittedFlag = false;
+                        }
+                        else {
+                            if (staticMatrix[lowestRLocation - 1][rotationCLocation + 1].status === 1
+                                || staticMatrix[lowestRLocation - 2][rotationCLocation].status === 1) {
+                                rotatePermittedFlag = false;
+                            }
                         }
                     }
                     if (rotationState === 1) {
-                        if (staticMatrix[lowestRLocation - 1][rotationCLocation - 1].status === 1) {
-                            rotatePermittedFlag = false
+                        //if tTetromino against left wall, can't rotate
+                        if (farLeftCLocation === 0) {
+                            rotatePermittedFlag = false;
+                        }
+                        else {
+                            if (staticMatrix[lowestRLocation - 1][rotationCLocation - 1].status === 1) {
+                                rotatePermittedFlag = false;
+                            }
                         }
                     }
                     if (rotationState === 2) {
-                        if (staticMatrix[lowestRLocation - 2][rotationCLocation].status === 1) {
-                            rotatePermittedFlag = false
+                        //if tTetromino against top wall, cant rotate
+                        if (lowestRLocation === 0) {
+                            rotatePermittedFlag = false;
+                        }
+                        else {
+                            if (staticMatrix[lowestRLocation - 2][rotationCLocation].status === 1) {
+                                rotatePermittedFlag = false;
+                            }
                         }
                     }
                     if (rotationState === 3) {
-                        if (staticMatrix[lowestRLocation][rotationCLocation - 1].status === 1
-                            || staticMatrix[lowestRLocation][rotationCLocation + 1].status === 1) {
-                            rotatePermittedFlag = false
+                        //if tTetromino against right wall, can't rotate
+                        if (farRightCLocation === BOXES_COLUMN_LENGTH - 1) {
+                            rotatePermittedFlag = false;
+                        }
+                        else {
+                            if (staticMatrix[lowestRLocation][rotationCLocation - 1].status === 1
+                                || staticMatrix[lowestRLocation][rotationCLocation + 1].status === 1) {
+                                rotatePermittedFlag = false;
+                            }
                         }
                     }
                 }
                 else if (tetrominoType === "ITetromino") {
                     if (rotationState === 0) {
-                        if (staticMatrix[lowestRLocation - 1][rotationCLocation].status === 1
-                            || staticMatrix[lowestRLocation + 1][rotationCLocation].status === 1
-                            || staticMatrix[lowestRLocation + 2][rotationCLocation].status === 1) {
-                            rotatePermittedFlag = false
+                        //if iTetromino on bottom 2 rows or if tetromino on top row
+                        if (lowestRLocation >= BOXES_ROW_LENGTH - 2 || lowestRLocation === 0) {
+                            rotatePermittedFlag = false;
+                        }
+                        else {
+                            if (staticMatrix[lowestRLocation - 1][rotationCLocation].status === 1
+                                || staticMatrix[lowestRLocation + 1][rotationCLocation].status === 1
+                                || staticMatrix[lowestRLocation + 2][rotationCLocation].status === 1) {
+                                rotatePermittedFlag = false;
+                            }
                         }
                     }
                     if (rotationState === 1) {
-                        if (staticMatrix[lowestRLocation - 2][rotationCLocation - 2].status === 1
-                            || staticMatrix[lowestRLocation - 2][rotationCLocation - 1].status === 1
-                            || staticMatrix[lowestRLocation - 2][rotationCLocation + 1].status === 1) {
-                            rotatePermittedFlag = false
+                        //if iTetromino against left wall or one away from left wall or against right wall, cant rotate
+                        if (farLeftCLocation < 2 || farRightCLocation === BOXES_COLUMN_LENGTH - 1) {
+                            rotatePermittedFlag = false;
+                        }
+                        else {
+                            if (staticMatrix[lowestRLocation - 2][rotationCLocation - 2].status === 1
+                                || staticMatrix[lowestRLocation - 2][rotationCLocation - 1].status === 1
+                                || staticMatrix[lowestRLocation - 2][rotationCLocation + 1].status === 1) {
+                                rotatePermittedFlag = false;
+                            }
                         }
                     }
                 }
                 else if (tetrominoType === "STetromino") {
                     if (rotationState === 0) {
-                        if (staticMatrix[lowestRLocation - 2][rotationCLocation - 1].status === 1
-                            || staticMatrix[lowestRLocation - 1][rotationCLocation - 1].status === 1) {
-                            rotatePermittedFlag = false
+                        //if sTetromino on top row, can't rotate
+                        if (this.lowestRLocation === 0) {
+                            rotatePermittedFlag = false;
+                        }
+                        else {
+                            if (staticMatrix[lowestRLocation - 2][rotationCLocation - 1].status === 1
+                                || staticMatrix[lowestRLocation - 1][rotationCLocation - 1].status === 1) {
+                                rotatePermittedFlag = false;
+                            }
                         }
                     }
                     if (rotationState === 1) {
-                        if (staticMatrix[lowestRLocation - 1][rotationCLocation + 1].status === 1
-                            || staticMatrix[lowestRLocation][rotationCLocation - 1].status === 1) {
-                            rotatePermittedFlag = false
+                        //if sTetromino against right wall, cant rotate
+                        if (farRightCLocation === BOXES_COLUMN_LENGTH - 1) {
+                            rotatePermittedFlag = false;
+                        }
+                        else {
+                            if (staticMatrix[lowestRLocation - 1][rotationCLocation + 1].status === 1
+                                || staticMatrix[lowestRLocation][rotationCLocation - 1].status === 1) {
+                                rotatePermittedFlag = false;
+                            }
                         }
                     }
                 }
                 else if (tetrominoType === "ZTetromino") {
                     if (rotationState === 0) {
-                        if (staticMatrix[lowestRLocation - 2][rotationCLocation - 1].status === 1
-                            || staticMatrix[lowestRLocation - 1][rotationCLocation - 1].status === 1) {
-                            rotatePermittedFlag = false
+                        //if zTetromino on top row, can't rotate
+                        if (lowestRLocation === 0) {
+                            rotatePermittedFlag = false;
+                        }
+                        else {
+                            if (staticMatrix[lowestRLocation - 2][rotationCLocation - 1].status === 1
+                                || staticMatrix[lowestRLocation - 1][rotationCLocation - 1].status === 1) {
+                                rotatePermittedFlag = false;
+                            }
                         }
                     }
                     if (rotationState === 1) {
-                        if (staticMatrix[lowestRLocation - 1][rotationCLocation + 1].status === 1
-                            || staticMatrix[lowestRLocation][rotationCLocation - 1].status === 1) {
-                            rotatePermittedFlag = false
+                        //if zTetromino against left wall, cant rotate
+                        if (farLeftCLocation === 0) {
+                            rotatePermittedFlag = false;
+                        }
+                        else {
+                            if (staticMatrix[lowestRLocation - 1][rotationCLocation + 1].status === 1
+                                || staticMatrix[lowestRLocation][rotationCLocation - 1].status === 1) {
+                                rotatePermittedFlag = false;
+                            }
                         }
                     }
                 }
@@ -249,7 +378,7 @@ export default class GameUtil {
             case "ArrowDown":
                 tetrominosCollision = this.detectBottomCollision(dynamicGame.currentTetromino, staticMatrix);
                 //if no tetromino underneath and not on bottom row
-                if (!tetrominosCollision && dynamicGame.currentTetromino.lowestRLocation < BOXES_ROW_COUNT - 1) {
+                if (!tetrominosCollision && dynamicGame.currentTetromino.lowestRLocation < BOXES_ROW_LENGTH - 1) {
                     //add new row to top of tetromino
                     dynamicGame.addNewRowToCurrentTetromino();
                     dynamicGame.currentTetromino.lowestRLocation++;
