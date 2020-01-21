@@ -37,22 +37,6 @@ export default class GameUtil {
                     return;
             }
         }
-
-        // if (
-        //     (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation][currentTetromino.farRightCLocation].status === 1
-        //         && staticMatrix[currentTetromino.lowestRLocation][currentTetromino.farRightCLocation + 1].status === 1)
-        //     ||
-        //     (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation][currentTetromino.farRightCLocation - 1].status === 1
-        //         && staticMatrix[currentTetromino.lowestRLocation][currentTetromino.farRightCLocation].status === 1)
-        //     ||
-        //     (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation - 1][currentTetromino.farRightCLocation].status === 1
-        //         && staticMatrix[currentTetromino.lowestRLocation - 1][currentTetromino.farRightCLocation + 1].status === 1)
-        //     ||
-        //     (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation - 2][currentTetromino.farRightCLocation].status === 1
-        //         && staticMatrix[currentTetromino.lowestRLocation - 2][currentTetromino.farRightCLocation + 1].status === 1)
-        // ) {
-        //     return;
-        // }
         currentTetromino.moveRight();
     }
 
@@ -69,19 +53,6 @@ export default class GameUtil {
                     return;
             }
         }
-
-        // if (
-        //     (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation][currentTetromino.farLeftCLocation].status === 1
-        //         && staticMatrix[currentTetromino.lowestRLocation][currentTetromino.farLeftCLocation - 1].status === 1)
-        //     ||
-        //     (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation - 1][currentTetromino.farLeftCLocation].status === 1
-        //         && staticMatrix[currentTetromino.lowestRLocation - 1][currentTetromino.farLeftCLocation - 1].status === 1)
-        //     ||
-        //     (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation - 2][currentTetromino.farLeftCLocation].status === 1
-        //         && staticMatrix[currentTetromino.lowestRLocation - 2][currentTetromino.farLeftCLocation - 1].status === 1)
-        // ) {
-        //     return;
-        // }
         currentTetromino.moveLeft();
     }
 

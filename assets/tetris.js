@@ -1,11 +1,11 @@
-import GameUtil from './GameUtil.js'
-import * as Tetromino from './Tetromino.js'
+import GameUtil from './game-util.js'
+import * as Tetromino from './tetromino.js'
+import GameBanner from './game-banner.js'
+import GameBoard from './game-board.js';
+
 const DEBUG = false;
 let canvas = document.getElementById("myCanvas");
 let ctx = canvas.getContext("2d");
-//banner area
-let banner = document.getElementById('gameBanner');
-let bannerContext = banner.getContext('2d');
 
 const CANVAS_WIDTH = document.getElementById('myCanvas').width;
 const GAME_WIDTH = CANVAS_WIDTH * .75;
@@ -54,6 +54,8 @@ let play = (dynamicGame, staticGame) => {
 
         }
     }
+    const gameBoard = new GameBoard(document.getElementById('myCanvas'));
+    gameBoard.clearBoard();
     ctx.clearRect(PADDING * 2, 0, CANVAS_WIDTH, CANVAS_HEIGHT - 3 * PADDING);
     GameUtil.drawScore();
     GameUtil.drawBoxes(staticGame.staticMatrix, true);
@@ -158,23 +160,9 @@ window.onload = () => {
 
     //key listener
     document.addEventListener("keydown", function (event) { GameUtil.keyDownHandler(event, dynamicGame, staticGame.staticMatrix); }, false);
-    drawBanner();
+    const gameBanner = new GameBanner(document.getElementById('gameBanner'));
+    gameBanner.draw()
     myPlay = setInterval(function () { play(dynamicGame, staticGame); }, ONE_SECOND);
 }
 
-let drawBanner = () => {
-    bannerContext.fillStyle = 'white';
-    bannerContext.fillRect(0, 0, banner.width, banner.height);
-    bannerContext.font = "30px Arial";
-    bannerContext.fillStyle = 'black';
-    bannerContext.fillText("My Tetris Game", 50, 30);
-    bannerContext.font = "20px Arial";
-   
-    bannerContext.fillText("Instructions: ", 50, 60);
-    bannerContext.fillText("1. Use right and left keyboard arrows to navigate.", 50, 90);
-    bannerContext.fillText("2. Press up arrow to rotate tetromino", 50, 120);
-    bannerContext.fillText("3. Press down arrow to jump one line", 50, 150);
-    bannerContext.fillText("4. Press spacebar to drop the tetromino to the bottom", 50, 180);
-    bannerContext.fillText("Earn 100 points for every filled line", 50, 250);
-}
 
