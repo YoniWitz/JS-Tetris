@@ -1,3 +1,5 @@
+const BOXES_COLUMN_LENGTH = 10;
+
 class Tetromino {
     moveRight() {
         this.keydownFlag = true;

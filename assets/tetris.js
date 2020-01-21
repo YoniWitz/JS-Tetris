@@ -1,28 +1,20 @@
 import GameUtil from './game-util.js'
-import * as Tetromino from './tetromino.js'
 import GameBanner from './game-banner.js'
 import GameBoard from './game-board.js';
-
-const DEBUG = false;
-let canvas = document.getElementById("myCanvas");
-let ctx = canvas.getContext("2d");
-
-const CANVAS_WIDTH = document.getElementById('myCanvas').width;
-const GAME_WIDTH = CANVAS_WIDTH * .75;
-const CANVAS_HEIGHT = document.getElementById('myCanvas').height;
-const PADDING = 5;
+import DynamicGame from './dynamic-game.js'
+import StaticGame from './static-game.js';
 
 //Boxes
 const BOXES_COLUMN_LENGTH = 10;
 const BOXES_ROW_LENGTH = BOXES_COLUMN_LENGTH * 2;
-// const BOXES_SIZE = GAME_WIDTH / BOXES_COLUMN_LENGTH;
 
-const NUMBER_OF_TETROMINOS = 7;
 const ONE_SECOND = 500;
 let myPlay;
 
-let play = (dynamicGame, staticGame) => {
+let DEBUG = false;
 
+let play = (dynamicGame, staticGame) => {
+    const gameBoard = new GameBoard(document.getElementById('myCanvas'));
     //if this is first iteration, set current tetromino
     if (dynamicGame.currentTetromino === null) {
         dynamicGame.setRandomTetromino();
@@ -38,7 +30,7 @@ let play = (dynamicGame, staticGame) => {
         let tetrominosCollision = GameUtil.detectBottomCollision(dynamicGame.currentTetromino, staticGame.staticMatrix);
         //if tetromino hit the bottom or collids with another tetromino
         if (dynamicGame.currentTetromino.lowestRLocation >= BOXES_ROW_LENGTH - 1 || tetrominosCollision) {
-            staticGame.addTetrominoToStaticMatrix(dynamicGame.currentTetromino);
+            staticGame.addTetrominoToStaticMatrix(dynamicGame.currentTetromino, gameBoard);
             dynamicGame.setRandomTetromino();
         }
         else {
@@ -51,110 +43,21 @@ let play = (dynamicGame, staticGame) => {
             else {
                 dynamicGame.currentTetromino.keydownFlag = false;
             }
-
         }
     }
-    const gameBoard = new GameBoard(document.getElementById('myCanvas'));
+    
     gameBoard.clearBoard();
-    ctx.clearRect(PADDING * 2, 0, CANVAS_WIDTH, CANVAS_HEIGHT - 3 * PADDING);
-    GameUtil.drawScore();
-    GameUtil.drawBoxes(staticGame.staticMatrix, true);
+    gameBoard.drawScore(GameUtil.score);
+
+    gameBoard.drawBoxes(staticGame.staticMatrix, true);
     GameUtil.addCoordinates(dynamicGame.currentTetromino.tetrominoMatrix);
-    GameUtil.drawBoxes(dynamicGame.currentTetromino.tetrominoMatrix, false);
-    // requestAnimationFrame(draw);
+    gameBoard.drawBoxes(dynamicGame.currentTetromino.tetrominoMatrix, false);
 }
 
-//drawBorderLines();
 window.onload = () => {
-    let dynamicGame = {
-        currentTetromino: null,
+    let dynamicGame = new DynamicGame(DEBUG);
 
-        newRow: function () {
-            let newRow = [];
-            for (let c = 0; c < BOXES_COLUMN_LENGTH; c++) {
-                newRow[c] = { status: 0 };
-            }
-            return newRow;
-        },
-
-        setRandomTetromino: function () {
-            let random = Math.round(Math.random() * (NUMBER_OF_TETROMINOS) - 0.5);
-            if (DEBUG) {
-                random = 6;
-            }
-
-            if (random === 0)
-                this.currentTetromino = new Tetromino.ITetromino();
-            if (random === 1)
-                this.currentTetromino = new Tetromino.JTetromino();
-            if (random === 2)
-                this.currentTetromino = new Tetromino.LTetromino();
-            if (random === 3)
-                this.currentTetromino = new Tetromino.OTetromino();
-            if (random === 4)
-                this.currentTetromino = new Tetromino.STetromino();
-            if (random === 5)
-                this.currentTetromino = new Tetromino.TTetromino();
-            if (random === 6)
-                this.currentTetromino = new Tetromino.ZTetromino();
-        },
-
-        addNewRowToCurrentTetromino: function () {
-            if (this.currentTetromino) {
-                this.currentTetromino.tetrominoMatrix.unshift(this.newRow())
-            }
-        }
-    }
-
-    let staticGame = {
-        staticMatrix: [],
-
-        createInitialStaticMatrix: function () {
-            for (let r = 0; r < BOXES_ROW_LENGTH; r++) {
-                this.staticMatrix[r] = [];
-                for (let c = 0; c < BOXES_COLUMN_LENGTH; c++) {
-                    this.staticMatrix[r][c] = { status: 0 };
-                }
-            }
-            GameUtil.addCoordinates(this.staticMatrix);
-        },
-
-        newRow: function () {
-            let newRow = [];
-            for (let c = 0; c < BOXES_COLUMN_LENGTH; c++) {
-                newRow[c] = { status: 0 };
-            }
-            return newRow;
-        },
-
-        addTetrominoToStaticMatrix(tetromino) {
-            for (let r = tetromino.lowestRLocation - 3; r <= tetromino.lowestRLocation; r++) {
-                if (r < 0 || r >= BOXES_ROW_LENGTH) {
-                    return;
-                }
-                let count = 0;
-                for (let c = 0; c < tetromino.tetrominoNumOfColumns; c++) {
-                    this.staticMatrix[r][c].status |= tetromino.tetrominoMatrix[r][c].status;
-                    if (this.staticMatrix[r][c].status === 1)
-                        count++;
-                }
-                //if row is full
-                if (count >= 10) {
-                    GameUtil.score += 100;
-                    this.staticMatrix.splice(r, 1);
-                    this.addNewRowToStaticMatrix();
-                    GameUtil.addCoordinates(this.staticMatrix);
-                    ctx.clearRect(PADDING * 2, PADDING * 2, GAME_WIDTH - PADDING * 3, CANVAS_HEIGHT - 3 * PADDING);
-                    GameUtil.drawBoxes(staticGame.staticMatrix, true);
-                }
-            }
-        },
-        addNewRowToStaticMatrix: function () {
-            if (this.staticMatrix) {
-                this.staticMatrix.unshift(this.newRow())
-            }
-        }
-    };
+    let staticGame =new StaticGame(GameUtil);
 
     staticGame.createInitialStaticMatrix();
 

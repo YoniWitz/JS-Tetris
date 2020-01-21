@@ -6,7 +6,6 @@ class GameBanner {
     }
 
     draw = function () {
-
         this.bannerContext.fillStyle = 'white';
         this.bannerContext.fillRect(0, 0, this.gameBannerCanvas.width, this.gameBannerCanvas.height);
         this.bannerContext.font = "30px Arial";
@@ -24,4 +23,4 @@ class GameBanner {
     }
 }
 
-export default  GameBanner
+export default GameBanner
