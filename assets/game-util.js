@@ -20,11 +20,6 @@ export default class GameUtil {
     static endOfGame = false;
     static score = 0;
 
-    static drawScore() {
-        ctx.font = "15px Arial";
-        ctx.fillStyle = "#0095DD";
-        ctx.fillText("Score: " + this.score, canvas.width - 85, 20);
-    }
     static moveRight(currentTetromino, staticMatrix) {
         //if tetromino  pressed against right wall
         if (currentTetromino.farRightCLocation >= (currentTetromino.tetrominoNumOfColumns - 1)) {
@@ -37,22 +32,6 @@ export default class GameUtil {
                     return;
             }
         }
-
-        // if (
-        //     (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation][currentTetromino.farRightCLocation].status === 1
-        //         && staticMatrix[currentTetromino.lowestRLocation][currentTetromino.farRightCLocation + 1].status === 1)
-        //     ||
-        //     (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation][currentTetromino.farRightCLocation - 1].status === 1
-        //         && staticMatrix[currentTetromino.lowestRLocation][currentTetromino.farRightCLocation].status === 1)
-        //     ||
-        //     (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation - 1][currentTetromino.farRightCLocation].status === 1
-        //         && staticMatrix[currentTetromino.lowestRLocation - 1][currentTetromino.farRightCLocation + 1].status === 1)
-        //     ||
-        //     (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation - 2][currentTetromino.farRightCLocation].status === 1
-        //         && staticMatrix[currentTetromino.lowestRLocation - 2][currentTetromino.farRightCLocation + 1].status === 1)
-        // ) {
-        //     return;
-        // }
         currentTetromino.moveRight();
     }
 
@@ -69,19 +48,6 @@ export default class GameUtil {
                     return;
             }
         }
-
-        // if (
-        //     (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation][currentTetromino.farLeftCLocation].status === 1
-        //         && staticMatrix[currentTetromino.lowestRLocation][currentTetromino.farLeftCLocation - 1].status === 1)
-        //     ||
-        //     (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation - 1][currentTetromino.farLeftCLocation].status === 1
-        //         && staticMatrix[currentTetromino.lowestRLocation - 1][currentTetromino.farLeftCLocation - 1].status === 1)
-        //     ||
-        //     (currentTetromino.tetrominoMatrix[currentTetromino.lowestRLocation - 2][currentTetromino.farLeftCLocation].status === 1
-        //         && staticMatrix[currentTetromino.lowestRLocation - 2][currentTetromino.farLeftCLocation - 1].status === 1)
-        // ) {
-        //     return;
-        // }
         currentTetromino.moveLeft();
     }
 
@@ -426,12 +392,5 @@ export default class GameUtil {
                 matrix[r][c].innerY = innerBoxY;
             }
         }
-    }
-    //static board stuff
-    static drawBorderLines = () => {
-        ctx.strokeStyle = "#FF0000";
-        ctx.strokeRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-        ctx.strokeStyle = "#FF0000";
-        ctx.strokeRect(PADDING, PADDING, GAME_WIDTH - PADDING * 2, CANVAS_HEIGHT - PADDING * 2);//for white background
     }
 }

@@ -14,7 +14,7 @@ With the new year approaching, I'd like to expand my profile which describes my 
 Therefore, I have begun revising the site and adding apps to my GitHub repository. 
 
 This is the second project in a series of many more to come where I'll provide recruiters and employers the opportunity to go over my code in a coherent and concise manner. I plan to build a comprehensive website, impress the viewer, enhance my skills and most importantly do what I love most,coding. 
-or
+
 
 ##  Installation Instructions
 
