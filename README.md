@@ -7,14 +7,13 @@ Classic Tetris Game Written entirely in Java Script (ES6), HTML and CSS
 <image src="./images/tetris_snapshot.bmp">
 
 ## Summary
+12/23/19
 
-In this project I got to delve deaper in to ES6. Used classes, class instants, static methods and fields and much more. 
+I began participating in a 'Software Development Mastermind' mentorship program towards the end of 2019. The purpose of the program is to strengthen and expand my skills as a Full Stack developer. The completed work is showcased on my GitHub and profile/personal website.
 
-With the new year approaching, I'd like to expand my profile which describes my programming skills to include wider and diverse capabilities. Ultimately, my goal is to land a job which incorporates these multiple skills. I would also like to demonstrate my abilities and wide knowledge of the craft. 
-Therefore, I have begun revising the site and adding apps to my GitHub repository. 
+This Tetris game is the second project of the series. I got to delve deaper in to ES6: classes, class instances, static methods and fields etc. 
 
-This is the second project in a series of many more to come where I'll provide recruiters and employers the opportunity to go over my code in a coherent and concise manner. I plan to build a comprehensive website, impress the viewer, enhance my skills and most importantly do what I love most,coding. 
-
+My ultimate goal is to land a job that incorporates my skills and utilizes my abilities and outgoing personality. So if you enjoyed reviewing my code as much as I did writing it, please find me on one of the links provided below.
 
 ##  Installation Instructions
 
