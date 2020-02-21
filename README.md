@@ -18,7 +18,7 @@ My ultimate goal is to land a job that incorporates my skills and utilizes my ab
 ##  Installation Instructions
 
 1. Download Repository
-2. Copy directory in to the browser.
+2. In VSCode, right click 'index.html' and select 'Open with Live Server'
 3. Enjoy!
 
 ## Author
